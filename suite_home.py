@@ -884,6 +884,48 @@ def render_home():
     </div>
     """, unsafe_allow_html=True)
 
+  # Free Trial section
+    st.markdown("""
+    <div class="trial-section fi d4">
+      <div class="trial-card">
+        <span style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;">
+            ⬡ No credit card · No sign-up · Instant access
+        </span>
+        <div class="trial-title">Try the <em>Suite</em> Free</div>
+        <p class="trial-desc">
+            All three tools. Full analysis. Zero cost.<br/>
+            Upgrade a paid plan when you need to export results or unlock AI interpretation.
+        </p>
+        <div class="trial-limits">
+          <span class="tl-pill ok">✓ All analysis features</span>
+          <span class="tl-pill ok">✓ Upload any dataset</span>
+          <span class="tl-pill ok">✓ Full results &amp; diagnostics</span>
+          <span class="tl-pill ok">✓ Charts &amp; entity plots</span>
+          <span class="tl-pill no">✗ AI Explainer (paid)</span>
+          <span class="tl-pill no">✗ Export: DOCX / CSV / Excel (paid)</span>
+        </div>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    _, trial_col, _ = st.columns([1.6, 1, 1.6])
+    with trial_col:
+        st.markdown('<div class="trial-btn-zone">', unsafe_allow_html=True)
+        free_trial_btn = st.button(
+            "⬡  Use Free Version",
+            type="primary",
+            key="free_trial_btn",
+            use_container_width=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(
+            '<div class="trial-note">No sign-up · No credit card · All 3 tools included</div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+
     # Apps showcase — st.html() bypasses the react-markdown / rehype-raw pipeline
     # entirely, rendering via DOMPurify directly. This avoids the lazy-load race
     # where rehype-raw hasn't mounted yet and raw HTML nodes fall back to escaped text.
@@ -942,47 +984,7 @@ def render_home():
     </div>
     """)
 
-    # Free Trial section
-    st.markdown("""
-    <div class="trial-section fi d4">
-      <div class="trial-card">
-        <span style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;">
-            ⬡ No credit card · No sign-up · Instant access
-        </span>
-        <div class="trial-title">Try the <em>Suite</em> Free</div>
-        <p class="trial-desc">
-            All three tools. Full analysis. Zero cost.<br/>
-            Upgrade a paid plan when you need to export results or unlock AI interpretation.
-        </p>
-        <div class="trial-limits">
-          <span class="tl-pill ok">✓ All analysis features</span>
-          <span class="tl-pill ok">✓ Upload any dataset</span>
-          <span class="tl-pill ok">✓ Full results &amp; diagnostics</span>
-          <span class="tl-pill ok">✓ Charts &amp; entity plots</span>
-          <span class="tl-pill no">✗ AI Explainer (paid)</span>
-          <span class="tl-pill no">✗ Export: DOCX / CSV / Excel (paid)</span>
-        </div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    _, trial_col, _ = st.columns([1.6, 1, 1.6])
-    with trial_col:
-        st.markdown('<div class="trial-btn-zone">', unsafe_allow_html=True)
-        free_trial_btn = st.button(
-            "⬡  Use Free Version",
-            type="primary",
-            key="free_trial_btn",
-            use_container_width=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown(
-            '<div class="trial-note">No sign-up · No credit card · All 3 tools included</div>',
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
+    
     # Pricing
     st.markdown("""
     <div class="lp-pricing fi d5">
