@@ -44,7 +44,7 @@ def render_home():
         st.switch_page(_goto)
 
     # ═══════════════════════════════════════════════════════════════════════════════
-    # LANDING PAGE CSS
+    # LANDING PAGE CSS 
     # ═══════════════════════════════════════════════════════════════════════════════
 
     st.markdown("""
@@ -859,7 +859,7 @@ def render_home():
       <p class="hero-sub">
         <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — unified under a single access key
         with a shared credit balance. Run econometric models, generate synthetic data, and
-        conduct psychometric analysis without switching platforms or managing separate accounts.
+        conduct psychometric analysis without switching platforms.
       </p>
 
       <div class="hero-stats">
