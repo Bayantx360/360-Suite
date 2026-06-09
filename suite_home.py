@@ -921,7 +921,7 @@ def render_home():
           <img src="data:image/jpeg;base64,{_av[5]}"
             style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:1;" />
           <div style="
-            width:36px;height:36px;border-radius:50%;
+            width:46px;height:46px;border-radius:50%;
             border:2px solid #05070f;
             background:#10141f;
             display:flex;align-items:center;justify-content:center;
