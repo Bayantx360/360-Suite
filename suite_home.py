@@ -938,7 +938,7 @@ def render_home():
             </span>
           </div>
           <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#9aa3be;padding-left:12px;">
-            500+ analyses runs without any restriction
+            500+ Analyses run by Researchers & Students Worldwide
           </div>
         </div>
       </div>
