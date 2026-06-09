@@ -44,7 +44,7 @@ def render_home():
         st.switch_page(_goto)
 
     # ═══════════════════════════════════════════════════════════════════════════════
-    # LANDING PAGE CSS 
+    # LANDING PAGE CSS
     # ═══════════════════════════════════════════════════════════════════════════════
 
     st.markdown("""
@@ -847,19 +847,19 @@ def render_home():
 
       <div class="hero-eyebrow">
         <span class="dot-live"></span>
-        Bayantx360 Suite — Data. Impact. Intelligence.
+        Stata costs $800/year. Bayantx360 doesn't.
       </div>
 
       <h1 class="hero-h1">
-        Advanced Statistical
-        <em>Analysis Suite</em>
-        <span class="h1-muted">Built for researchers who mean business.</span>
+        Run Panel Regressions,
+        <em>EFA &amp; More</em>
+        <span class="h1-muted">Free. In your browser. Right now.</span>
       </h1>
 
       <p class="hero-sub">
-        <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — unified under a single access key
-        with a shared credit balance. Run econometric models, generate synthetic data, and
-        conduct psychometric analysis without switching platforms.
+        <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — four specialised tools under one
+        access key. Full analysis is always free. Pay only when you need an
+        <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
 
       <div class="hero-stats">
@@ -883,8 +883,6 @@ def render_home():
 
     </div>
     """, unsafe_allow_html=True)
-
-  
 
     # Apps showcase — st.html() bypasses the react-markdown / rehype-raw pipeline
     # entirely, rendering via DOMPurify directly. This avoids the lazy-load race
@@ -916,8 +914,8 @@ def render_home():
           <div class="app-icon purple">🚀</div>
           <div class="app-name">Ready in Seconds</div>
           <div class="app-desc">
-            No installs, no dependencies, no setup. Open your browser. 
-            Eenter your key, and run production-grade statistical models from any device.
+            No installs, no dependencies, no setup. Open your browser.
+            Enter your key, and run production-grade statistical models from any device.
           </div>
           <div class="app-tags">
             <span class="app-tag">Zero Setup</span>
@@ -944,25 +942,28 @@ def render_home():
     </div>
     """)
 
-  # Free Trial section
+    # Free Trial CTA — compact version above pricing
     st.markdown("""
-    <div class="trial-section fi d4">
-      <div class="trial-card">
-        <span style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;">
+    <div style="max-width:860px;margin:0 auto;padding:0 clamp(20px,5vw,48px) 8px;text-align:center;" class="fi d4">
+      <div style="background:linear-gradient(135deg,rgba(0,229,200,0.055),rgba(124,109,240,0.06));border:1px solid rgba(0,229,200,0.22);border-radius:22px;padding:36px 32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal) 40%,var(--purple) 60%,transparent);"></div>
+        <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;">
             ⬡ No credit card · No sign-up · Instant access
-        </span>
-        <div class="trial-title">Try the <em>Suite</em> Free</div>
-        <p class="trial-desc">
-            All three tools. Full analysis. Zero cost.<br/>
-            Upgrade a paid plan when you need to export results or unlock AI interpretation.
+        </div>
+        <div style="font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,1.8rem);color:var(--text);letter-spacing:-0.03em;margin-bottom:10px;">
+            Try the <span style="color:var(--teal);">Full Suite</span> Free
+        </div>
+        <p style="font-family:var(--mono);font-size:0.72rem;color:var(--text2);line-height:2;margin-bottom:20px;">
+            Upload your data, run every model, see every result — completely free.<br/>
+            Only pay when you need the <strong style="color:var(--text);">AI interpretation</strong> or want to <strong style="color:var(--text);">export your results</strong>.
         </p>
-        <div class="trial-limits">
-          <span class="tl-pill ok">✓ All analysis features</span>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:8px;">
+          <span class="tl-pill ok">✓ All 4 tools</span>
           <span class="tl-pill ok">✓ Upload any dataset</span>
           <span class="tl-pill ok">✓ Full results &amp; diagnostics</span>
-          <span class="tl-pill ok">✓ Charts &amp; entity plots</span>
-          <span class="tl-pill no">✗ AI Explainer (paid)</span>
-          <span class="tl-pill no">✗ Export: DOCX / CSV / Excel (paid)</span>
+          <span class="tl-pill ok">✓ Charts &amp; plots</span>
+          <span class="tl-pill no">✗ AI Explainer (1 credit)</span>
+          <span class="tl-pill no">✗ Export DOCX/CSV/Excel (1 credit)</span>
         </div>
       </div>
     </div>
@@ -979,20 +980,22 @@ def render_home():
         )
         st.markdown("</div>", unsafe_allow_html=True)
         st.markdown(
-            '<div class="trial-note">No sign-up · No credit card · All 3 tools included</div>',
+            '<div class="trial-note">No sign-up · No credit card · All 4 tools included</div>',
             unsafe_allow_html=True,
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
-  
 
-    
     # Pricing
     st.markdown("""
     <div class="lp-pricing fi d5">
       <div class="section-head">
         <div class="section-title">Buy Credits & <em>Access More</em> Features</div>
         <span class="section-label">Pay-as-you-go credits · No monthly subscription · Credits never expire</span>
+        <p style="font-family:var(--mono);font-size:0.7rem;color:var(--text2);margin-top:14px;line-height:2;">
+          <strong style="color:var(--teal);">1 credit = 1 AI interpretation</strong> &nbsp;or&nbsp; <strong style="color:var(--teal);">1 export</strong> &nbsp;(DOCX, CSV, or Excel).
+          Analysis runs are always free and unlimited.
+        </p>
       </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1062,11 +1065,11 @@ def render_home():
     <div class="lp-gate fi d6">
       <div class="gate-card">
         <div class="gate-lock">🔑</div>
-        <div class="gate-title">Enter Your Access Key</div>
+        <div class="gate-title">Already have a key?</div>
         <div class="gate-desc">
-          The Bayantx360 Suite uses a <strong>credit-based, pay-as-you-go model</strong>.
-          One key unlocks <strong>all three tools</strong> with a shared credit balance
-          that updates in real time. No recurring billing. Credits never expire.
+          Enter your access key below to unlock all four tools instantly.
+          One key. <strong>Shared credit balance</strong> across every app.
+          No recurring billing. Credits never expire.
         </div>
         <div class="key-format">
             <span class="kf-icon">◈</span>
@@ -1104,7 +1107,7 @@ def render_home():
 
         st.markdown("""
         <div class="gate-links">
-            <a href="https://x.com/bayantx360" target="_blank">👤 Contact Sales</a>
+            <a href="mailto:bayantx360@gmail.com">👤 Contact Sales</a>
             <span class="gate-sep">|</span>
             <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">📋 User Guide</a>
             <span class="gate-sep">|</span>
