@@ -664,7 +664,7 @@ def render_home():
             <div class="nav-brand">
                 <div class="nav-logo">⬡</div>
                 <div>
-                    Bayant<span class="brand-accent">x360</span> Suite
+                    x<span class="brand-accent">360</span> Suite
                     <div class="brand-sub">Unified Analytics Platform</div>
                 </div>
             </div>
