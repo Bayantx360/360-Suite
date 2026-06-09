@@ -678,7 +678,7 @@ def render_home():
         st.markdown("""
         <div class="selector-wrap lp-wrap">
           <div class="selector-header fi d2">
-            <span class="selector-greeting">⬡ Bayantx360 Suite — App Selector</span>
+            <span class="selector-greeting">⬡ x360-Suite — App Selector</span>
             <div class="selector-title">Which tool are you<br/>working with today?</div>
             <p class="selector-sub">
                 Your single access key works across the entire suite.<br/>
