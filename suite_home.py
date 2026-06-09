@@ -909,17 +909,17 @@ def render_home():
       ">
         <div style="display:flex; align-items:center;">
           <img src="data:image/jpeg;base64,{_av[0]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:6;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:6;" />
           <img src="data:image/jpeg;base64,{_av[1]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:5;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:5;" />
           <img src="data:image/jpeg;base64,{_av[2]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:4;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:4;" />
           <img src="data:image/jpeg;base64,{_av[3]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:3;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:3;" />
           <img src="data:image/jpeg;base64,{_av[4]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:2;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:2;" />
           <img src="data:image/jpeg;base64,{_av[5]}"
-            style="width:36px;height:36px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:1;" />
+            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:1;" />
           <div style="
             width:46px;height:46px;border-radius:50%;
             border:2px solid #05070f;
