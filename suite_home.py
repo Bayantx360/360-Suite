@@ -893,7 +893,7 @@ def render_home():
         with open(path, "rb") as _f:
             return base64.b64encode(_f.read()).decode()
 
-    _av = [_avatar_b64(f"user{i}.jpg") for i in range(1, 7)]
+    _av = [_avatar_b64(f"user{i}.jpeg") for i in range(1, 7)]
 
     st.html(f"""
     <div style="
