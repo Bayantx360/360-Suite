@@ -787,7 +787,7 @@ def render_home():
         # Footer
         st.markdown("""
         <div class="lp-footer fi d8">
-            <div class="footer-brand">Bayant<span class="ft">x360</span> Suite</div>
+            <div class="footer-brand">Sta<span class="ft">X360</span></div>
             <div class="footer-links">
                 <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">User Guide</a>
                 <a href="mailto:bayantx360@gmail.com">Support</a>
@@ -812,7 +812,7 @@ def render_home():
         <div class="nav-brand">
             <div class="nav-logo">⬡</div>
             <div>
-                Bayant<span class="brand-accent">x360</span> Suite
+                Bayant<span class="brand-accent">Sta</span>X360
                 <div class="brand-sub">Unified Analytics Platform</div>
             </div>
         </div>
@@ -847,7 +847,7 @@ def render_home():
 
       <div class="hero-eyebrow">
         <span class="dot-live"></span>
-        Stata costs $800/year. Bayantx360 doesn't.
+        Stata costs $800/year. StaX360 doesn't.
       </div>
 
       <h1 class="hero-h1">
