@@ -812,7 +812,7 @@ def render_home():
         <div class="nav-brand">
             <div class="nav-logo">⬡</div>
             <div>
-                Bayant<span class="brand-accent">Sta</span>X360
+                <span class="brand-accent">Sta</span>X360
                 <div class="brand-sub">Unified Analytics Platform</div>
             </div>
         </div>
@@ -862,24 +862,6 @@ def render_home():
         <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
 
-      <div class="hero-stats">
-        <div class="hs-block">
-          <div class="hs-num">4+</div>
-          <div class="hs-label">Specialised Tools</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">1</div>
-          <div class="hs-label">Access Key</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">AI</div>
-          <div class="hs-label">Intelligent Layer</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">∞</div>
-          <div class="hs-label">Free Trial</div>
-        </div>
-      </div>
 
     </div>
     """, unsafe_allow_html=True)
