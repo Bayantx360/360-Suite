@@ -916,7 +916,7 @@ def render_home():
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00e5c8;flex-shrink:0;"></span>
             <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#e4eaf8;font-weight:500;">
-              Trusted by <strong style="color:#00e5c8;">10 researchers</strong>
+              Trusted by <strong style="color:#00e5c8;">Researchers globally</strong>
             </span>
           </div>
           <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#9aa3be;padding-left:12px;">
@@ -935,7 +935,7 @@ def render_home():
       <div class="section-head">
         <span class="section-label">Why Bayantx360?</span>
         <div class="section-title">
-          Why Researchers, Students & Data Analysts are choosing<br><em>Bayantx360 Suite.</em>
+          Why Researchers, Students & Data Analysts are choosing<br><em>StaX360.</em>
         </div>
       </div>
       <div class="apps-grid">
