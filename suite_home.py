@@ -862,6 +862,40 @@ def render_home():
         <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
 
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-top:8px;">
+        <button onclick="window.dispatchEvent(new CustomEvent('stax-free-trial'))"
+          style="background:linear-gradient(135deg,#00e5c8,#00bfab);border:none;color:#04090f;
+                 font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:0.9rem;
+                 border-radius:12px;padding:15px 36px;cursor:pointer;letter-spacing:0.03em;
+                 box-shadow:0 4px 24px rgba(0,229,200,0.35);transition:all .2s;">
+          ⬡ &nbsp;Use Free Version
+        </button>
+        <a href="#key-gate"
+          style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--teal);
+                 text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(0,229,200,0.3);
+                 padding-bottom:2px;transition:border-color .2s;">
+          Already have a key? →
+        </a>
+      </div>
+
+      <div class="hero-stats" style="margin-top:44px;">
+        <div class="hs-block">
+          <div class="hs-num">4</div>
+          <div class="hs-label">Specialised Tools</div>
+        </div>
+        <div class="hs-block">
+          <div class="hs-num">500+</div>
+          <div class="hs-label">Analyses Run</div>
+        </div>
+        <div class="hs-block">
+          <div class="hs-num">$0</div>
+          <div class="hs-label">To Get Started</div>
+        </div>
+        <div class="hs-block">
+          <div class="hs-num">∞</div>
+          <div class="hs-label">Free Analysis Runs</div>
+        </div>
+      </div>
 
     </div>
     """, unsafe_allow_html=True)
@@ -933,7 +967,7 @@ def render_home():
     st.html("""
     <div class="apps-section fi d3">
       <div class="section-head">
-        <span class="section-label">Why Bayantx360?</span>
+        <span class="section-label">Why StaX360?</span>
         <div class="section-title">
           Why Researchers, Students & Data Analysts are choosing<br><em>StaX360.</em>
         </div>
@@ -1027,85 +1061,9 @@ def render_home():
             unsafe_allow_html=True,
         )
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Pricing
+    # Auth Gate — placed BEFORE pricing so returning users don't scroll past it
     st.markdown("""
-    <div class="lp-pricing fi d5">
-      <div class="section-head">
-        <div class="section-title">Buy Credits & <em>Access More</em> Features</div>
-        <span class="section-label">Pay-as-you-go credits · No monthly subscription · Credits never expire</span>
-        <p style="font-family:var(--mono);font-size:0.7rem;color:var(--text2);margin-top:14px;line-height:2;">
-          <strong style="color:var(--teal);">1 credit = 1 AI interpretation</strong> &nbsp;or&nbsp; <strong style="color:var(--teal);">1 export</strong> &nbsp;(DOCX, CSV, or Excel).
-          Analysis runs are always free and unlimited.
-        </p>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    pc1, pc2, pc3 = st.columns(3, gap="small")
-
-    with pc1:
-        st.markdown("""
-        <div class="price-card fi d3">
-          <div class="price-plan">Starter</div>
-          <div class="price-amount"><span class="price-curr">.</span>$8</div>
-          <div class="price-credits">5 Suite Credits</div>
-          <div class="price-note">Works across all apps</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/tumvwsar2zi5", type="primary", use_container_width=True)
-
-    with pc2:
-        st.markdown("""
-        <div class="price-card featured fi d4">
-          <span class="price-badge badge-pop">Most Popular</span>
-          <div class="price-plan">Standard</div>
-          <div class="price-amount"><span class="price-curr">.</span>$18</div>
-          <div class="price-credits">15 Suite Credits</div>
-          <div class="price-note">Best value for active researchers</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/w08ixsaspudw", type="primary", use_container_width=True)
-
-    with pc3:
-        st.markdown("""
-        <div class="price-card fi d5">
-          <span class="price-badge badge-val">Best Value</span>
-          <div class="price-plan">Pro</div>
-          <div class="price-amount"><span class="price-curr">.</span>$30</div>
-          <div class="price-credits">30 Suite Credits</div>
-          <div class="price-note">For teams and power researchers</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/rjsshar0wqlk", type="primary", use_container_width=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Auth Gate
-    st.markdown("""
-    <div class="lp-gate fi d6">
+    <div id="key-gate" class="lp-gate fi d6">
       <div class="gate-card">
         <div class="gate-lock">🔑</div>
         <div class="gate-title">Already have a key?</div>
@@ -1158,16 +1116,92 @@ def render_home():
         </div>
         """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Pricing — below auth gate
+    st.markdown("""
+    <div class="lp-pricing fi d5">
+      <div class="section-head">
+        <div class="section-title">Buy Credits & <em>Access More</em> Features</div>
+        <span class="section-label">Pay-as-you-go credits · No monthly subscription · Credits never expire</span>
+        <p style="font-family:var(--mono);font-size:0.7rem;color:var(--text2);margin-top:14px;line-height:2;">
+          <strong style="color:var(--teal);">1 credit = 1 AI interpretation</strong> &nbsp;or&nbsp; <strong style="color:var(--teal);">1 export</strong> &nbsp;(DOCX, CSV, or Excel).
+          Analysis runs are always free and unlimited.
+        </p>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    pc1, pc2, pc3 = st.columns(3, gap="small")
+
+    with pc1:
+        st.markdown("""
+        <div class="price-card fi d3">
+          <div class="price-plan">Starter</div>
+          <div class="price-amount">$8</div>
+          <div class="price-credits">5 Suite Credits</div>
+          <div class="price-note">Works across all apps</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
+            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
+            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
+            <li><span class="pf-check">✓</span>Credits never expire</li>
+          </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        st.link_button("Buy Credits →", "https://flutterwave.com/pay/tumvwsar2zi5", type="primary", use_container_width=True)
+
+    with pc2:
+        st.markdown("""
+        <div class="price-card featured fi d4">
+          <span class="price-badge badge-pop">Most Popular</span>
+          <div class="price-plan">Standard</div>
+          <div class="price-amount">$18</div>
+          <div class="price-credits">15 Suite Credits</div>
+          <div class="price-note">Best value for active researchers</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
+            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
+            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
+            <li><span class="pf-check">✓</span>Credits never expire</li>
+          </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        st.link_button("Buy Credits →", "https://flutterwave.com/pay/w08ixsaspudw", type="primary", use_container_width=True)
+
+    with pc3:
+        st.markdown("""
+        <div class="price-card fi d5">
+          <span class="price-badge badge-val">Best Value</span>
+          <div class="price-plan">Pro</div>
+          <div class="price-amount">$30</div>
+          <div class="price-credits">30 Suite Credits</div>
+          <div class="price-note">For teams and power researchers</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
+            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
+            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
+            <li><span class="pf-check">✓</span>Credits never expire</li>
+          </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        st.link_button("Buy Credits →", "https://flutterwave.com/pay/rjsshar0wqlk", type="primary", use_container_width=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # Footer
     st.markdown("""
     <div class="lp-footer fi d8">
-        <div class="footer-brand">Bayant<span class="ft">x360</span> Suite</div>
+        <div class="footer-brand">Sta<span class="ft">X360</span></div>
         <div class="footer-links">
             <a href="https://x.com/bayantx360" target="_blank">Twitter / X</a>
             <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">User Guide</a>
             <a href="mailto:bayantx360@gmail.com">Support</a>
         </div>
-        <div class="footer-copy">Bayantx360 · Unified Analytics Suite · Credit-based access</div>
+        <div class="footer-copy">StaX360 · Unified Analytics Suite · Credit-based access</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1182,7 +1216,7 @@ def render_home():
 # ── V2 Router setup ───────────────────────────────────────────────────────────
 # st.navigation() MUST come before st.set_page_config() — it is the first
 # Streamlit call. _pg.run() dispatches to the current page's callable/file.
-_home_page      = st.Page(render_home,            title="Bayantx360 Suite", icon="🌐", default=True)
+_home_page      = st.Page(render_home,            title="StaX360 Suite", icon="🌐", default=True)
 _panelstatx_page = st.Page("pages/panelstatx.py",  title="PanelStatX",       icon="📐")
 _datasynthx_page = st.Page("pages/datasynthx.py",  title="DataSynthX",       icon="🧬")
 _efactor_page    = st.Page("pages/efactor.py",     title="EFActor",          icon="🔬")
@@ -1194,7 +1228,7 @@ _pg = st.navigation(
 )
 
 st.set_page_config(
-    page_title="Bayantx360 Suite",
+    page_title="StaX360 Suite",
     page_icon="⬡",
     layout="wide",
     initial_sidebar_state="collapsed",
