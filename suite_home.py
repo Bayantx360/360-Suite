@@ -960,27 +960,19 @@ def render_home():
         <div class="app-card teal">
           <div class="app-icon teal">⚡️</div>
           <div class="app-name">No Code</div>
-          <div class="app-desc">
-            Run advanced statistical analysis through an intuitive interface — without writing syntax, configuring environments, or learning complex software.
-          </div>
+          
         </div>
 
         <div class="app-card purple">
           <div class="app-icon purple">🚀</div>
           <div class="app-name">Ready in Seconds</div>
-          <div class="app-desc">
-            No installs, no dependencies, no setup. Open your browser.
-            Enter your key, and run production-grade statistical models from any device.
-          </div>
+          
           
         </div>
 
         <div class="app-card amber">
           <div class="app-icon amber">💳</div>
           <div class="app-name">License Fee-Free</div>
-          <div class="app-desc">
-            Skip costly annual subscriptions and restrictive academic licenses.
-            Access and use advanced statistical tools for free anytime. Only pay for exporting valuable data and results through a flexible credit-based,pay-as-you-go model.
           
         </div>
 
