@@ -881,24 +881,6 @@ def render_home():
 
       
 
-      <div class="hero-stats" style="margin-top:44px;">
-        <div class="hs-block">
-          <div class="hs-num">4</div>
-          <div class="hs-label">Specialised Tools</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">500+</div>
-          <div class="hs-label">Analyses Run</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">$0</div>
-          <div class="hs-label">To Get Started</div>
-        </div>
-        <div class="hs-block">
-          <div class="hs-num">∞</div>
-          <div class="hs-label">Free Analysis Runs</div>
-        </div>
-      </div>
 
     </div>
     """, unsafe_allow_html=True)
