@@ -931,16 +931,14 @@ def render_home():
             position:relative;z-index:0;
           ">+4</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="display:flex;flex-direction:column;gap:1px;">
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00e5c8;flex-shrink:0;"></span>
             <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#e4eaf8;font-weight:500;">
               Trusted by <strong style="color:#00e5c8;">Researchers globally</strong>
             </span>
           </div>
-          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#9aa3be;padding-left:12px;">
-            500+ Analyses run by Researchers & Students Worldwide
-          </div>
+          
         </div>
       </div>
     </div>
