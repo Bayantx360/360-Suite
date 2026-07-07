@@ -879,21 +879,7 @@ def render_home():
         <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
 
-      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-top:8px;">
-        <button onclick="window.dispatchEvent(new CustomEvent('stax-free-trial'))"
-          style="background:linear-gradient(135deg,#00e5c8,#00bfab);border:none;color:#04090f;
-                 font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:0.9rem;
-                 border-radius:12px;padding:15px 36px;cursor:pointer;letter-spacing:0.03em;
-                 box-shadow:0 4px 24px rgba(0,229,200,0.35);transition:all .2s;">
-          ⬡ &nbsp;Use Free Version
-        </button>
-        <a href="#key-gate"
-          style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--teal);
-                 text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(0,229,200,0.3);
-                 padding-bottom:2px;transition:border-color .2s;">
-          Already have a key? →
-        </a>
-      </div>
+      
 
       <div class="hero-stats" style="margin-top:44px;">
         <div class="hs-block">
