@@ -1017,14 +1017,7 @@ def render_home():
             Upload your data, run every model, see every result — completely free.<br/>
             Only pay when you need the <strong style="color:var(--text);">AI interpretation</strong> or want to <strong style="color:var(--text);">export your results</strong>.
         </p>
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:8px;">
-          <span class="tl-pill ok">✓ All 4 tools</span>
-          <span class="tl-pill ok">✓ Upload any dataset</span>
-          <span class="tl-pill ok">✓ Full results &amp; diagnostics</span>
-          <span class="tl-pill ok">✓ Charts &amp; plots</span>
-          <span class="tl-pill no">✗ AI Explainer (1 credit)</span>
-          <span class="tl-pill no">✗ Export DOCX/CSV/Excel (1 credit)</span>
-        </div>
+        
       </div>
     </div>
     """, unsafe_allow_html=True)
