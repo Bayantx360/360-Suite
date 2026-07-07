@@ -263,7 +263,24 @@ def render_home():
         grid-template-columns: repeat(3, 1fr);
         gap: 18px;
     }
-    @media(max-width:780px){.apps-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
+    @media(max-width:780px){
+        .apps-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto;gap:10px}
+        .app-card{
+            display:flex; align-items:flex-start; gap:14px;
+            padding:16px 18px; border-radius:14px;
+        }
+        .app-icon{
+            width:38px; height:38px; border-radius:10px;
+            font-size:1.05rem; margin-bottom:0; flex-shrink:0;
+        }
+        .app-name{ font-size:0.92rem; margin-bottom:3px; }
+        .app-desc{
+            font-size:0.62rem; line-height:1.5; margin-bottom:0;
+            display:-webkit-box; -webkit-line-clamp:2;
+            -webkit-box-orient:vertical; overflow:hidden;
+        }
+        .app-tags{ display:none; }
+    }
 
     .app-card {
         background: var(--s2); border: 1px solid var(--border);
