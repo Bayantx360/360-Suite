@@ -963,11 +963,6 @@ def render_home():
           <div class="app-desc">
             Run advanced statistical analysis through an intuitive interface — without writing syntax, configuring environments, or learning complex software.
           </div>
-          <div class="app-tags">
-            <span class="app-tag">No Code</span>
-            <span class="app-tag">No Syntax</span>
-            <span class="app-tag">Research-Friendly</span>
-          </div>
         </div>
 
         <div class="app-card purple">
@@ -977,11 +972,7 @@ def render_home():
             No installs, no dependencies, no setup. Open your browser.
             Enter your key, and run production-grade statistical models from any device.
           </div>
-          <div class="app-tags">
-            <span class="app-tag">Zero Setup</span>
-            <span class="app-tag">Cross-Platform</span>
-            <span class="app-tag">Browser-Native</span>
-          </div>
+          
         </div>
 
         <div class="app-card amber">
@@ -990,12 +981,7 @@ def render_home():
           <div class="app-desc">
             Skip costly annual subscriptions and restrictive academic licenses.
             Access and use advanced statistical tools for free anytime. Only pay for exporting valuable data and results through a flexible credit-based,pay-as-you-go model.
-          </div>
-          <div class="app-tags">
-            <span class="app-tag">No Monthly Subscription</span>
-            <span class="app-tag">Credit-based</span>
-            <span class="app-tag">Pay-As-You-Go</span>
-          </div>
+          
         </div>
 
       </div>
