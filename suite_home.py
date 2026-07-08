@@ -870,12 +870,11 @@ def render_home():
       <h1 class="hero-h1">
         Generate Custom Dataset, Clean and Fix EFA in Raw Data, and
         <em> Run Panel Regression</em> on your Mobile Phone
-        <span class="h1-muted"><br>● No Complex Installation ⚙️ ● No Code/Syntax 📟 ● Works on Mobile phones and laptops via web browser📲</span>
       </h1>
-
       <p class="hero-sub">
-        <strong> PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — four specialised tools under one
-        access key. Full analysis is always free. Pay only when you need an
+        <strong> StaX360 <\strong> is a user-friendly modular statistical analysis system for researchers. It is composed of four main engines that users can use without installing a software, writing code syntax, or paying huge license fee. These are: <strong> PanelStatX for running panel regression,
+        DataSynthX for generating custom dataset, DataCleanX for cleaning raw data, and EFActor for fixing EFA issues</strong><br><br>
+        Full analysis is always free. Pay only when you need an
         <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
 
