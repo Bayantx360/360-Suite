@@ -954,27 +954,6 @@ def render_home():
         <div class="section-title">
           Why Researchers, Students & Data Analysts are choosing<br><em>StaX360.</em>
         </div>
-      </div>
-      <div class="apps-grid">
-
-        <div class="app-card teal">
-          <div class="app-icon teal">⚡️</div>
-          <div class="app-name">No Code</div>
-          
-        </div>
-
-        <div class="app-card purple">
-          <div class="app-icon purple">🚀</div>
-          <div class="app-name">Ready in Seconds</div>
-          
-          
-        </div>
-
-        <div class="app-card amber">
-          <div class="app-icon amber">💳</div>
-          <div class="app-name">License Fee-Free</div>
-          
-        </div>
 
       </div>
     </div>
