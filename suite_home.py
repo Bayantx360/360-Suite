@@ -944,20 +944,6 @@ def render_home():
     </div>
     """)
 
-        # Apps showcase — st.html() bypasses the react-markdown / rehype-raw pipeline
-    # entirely, rendering via DOMPurify directly. This avoids the lazy-load race
-    # where rehype-raw hasn't mounted yet and raw HTML nodes fall back to escaped text.
-    st.html("""
-    <div class="apps-section fi d3">
-      <div class="section-head">
-        <span class="section-label">Why StaX360?</span>
-        <div class="section-title">
-          Why Researchers, Students & Data Analysts are choosing<br><em>StaX360.</em>
-        </div>
-
-      </div>
-    </div>
-    """)
 
     # Free Trial CTA — compact version above pricing
     st.markdown("""
