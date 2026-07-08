@@ -213,6 +213,12 @@ def render_home():
         color: var(--text2); line-height: 2; max-width: 620px; margin: 0 0 52px 0;
     }
     .hero-sub strong { color: var(--text); }
+    @media(max-width:480px){
+        .lp-hero{padding-top:clamp(40px,8vw,56px);padding-bottom:20px}
+        .hero-eyebrow{margin-bottom:22px}
+        .hero-h1{font-size:2.05rem;margin-bottom:16px}
+        .hero-sub{font-size:0.74rem;line-height:1.7;margin-bottom:28px}
+    }
 
     /* ── Stat bar ── */
     .hero-stats {
@@ -868,21 +874,41 @@ def render_home():
       </div>
 
       <h1 class="hero-h1">
-        Generate Custom Dataset, Clean and Fix EFA in Raw Data, and
-        <em> Run Panel Regression</em> on your Mobile Phone
+        Run Advanced Statistical Analysis —
+        <em>No Code, No License Fees</em>
       </h1>
       <p class="hero-sub">
-        <strong> StaX360 <\strong> is a user-friendly modular statistical analysis system for researchers. It is composed of four main engines that users can use without installing a software, writing code syntax, or paying huge license fee. These are: <strong> PanelStatX for running panel regression,
-        DataSynthX for generating custom dataset, DataCleanX for cleaning raw data, and EFActor for fixing EFA issues</strong><br><br>
-        Full analysis is always free. Pay only when you need an
-        <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
+        Four specialised tools — <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong>.
+        Full analysis is always free. Pay only for an <strong>AI interpretation</strong>
+        or a <strong>publication-ready export</strong>.
       </p>
-
-      
-
 
     </div>
     """, unsafe_allow_html=True)
+
+    # Primary CTA — placed directly under the hero so it's reachable
+    # without scrolling past the trust strip or a second marketing block.
+    _, trial_col, _ = st.columns([1.6, 1, 1.6])
+    with trial_col:
+        st.markdown('<div class="trial-btn-zone">', unsafe_allow_html=True)
+        free_trial_btn = st.button(
+            "⬡  Use Free Version",
+            type="primary",
+            key="free_trial_btn",
+            use_container_width=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(
+            '<div class="trial-note">No sign-up · No credit card · All 4 tools included</div>',
+            unsafe_allow_html=True,
+        )
+    st.markdown(
+        '<div style="text-align:center;margin-top:14px;">'
+        '<a href="#key-gate" style="font-family:var(--mono);font-size:0.68rem;color:var(--teal);'
+        'text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(0,229,200,0.3);padding-bottom:2px;">'
+        'Already have a key? →</a></div>',
+        unsafe_allow_html=True,
+    )
 
 
     # Trust banner — real user avatars + usage count
@@ -942,42 +968,6 @@ def render_home():
       </div>
     </div>
     """)
-
-
-    # Free Trial CTA — compact version above pricing
-    st.markdown("""
-    <div style="max-width:860px;margin:0 auto;padding:0 clamp(20px,5vw,48px) 8px;text-align:center;" class="fi d4">
-      <div style="background:linear-gradient(135deg,rgba(0,229,200,0.055),rgba(124,109,240,0.06));border:1px solid rgba(0,229,200,0.22);border-radius:22px;padding:36px 32px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal) 40%,var(--purple) 60%,transparent);"></div>
-        <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;">
-            ⬡ No credit card · No sign-up · Instant access
-        </div>
-        <div style="font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,1.8rem);color:var(--text);letter-spacing:-0.03em;margin-bottom:10px;">
-            Try the <span style="color:var(--teal);">Full Suite</span> Free
-        </div>
-        <p style="font-family:var(--mono);font-size:0.72rem;color:var(--text2);line-height:2;margin-bottom:20px;">
-            Upload your data, run every model, see every result — completely free.<br/>
-            Only pay when you need the <strong style="color:var(--text);">AI interpretation</strong> or want to <strong style="color:var(--text);">export your results</strong>.
-        </p>
-        
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    _, trial_col, _ = st.columns([1.6, 1, 1.6])
-    with trial_col:
-        st.markdown('<div class="trial-btn-zone">', unsafe_allow_html=True)
-        free_trial_btn = st.button(
-            "⬡  Use Free Version",
-            type="primary",
-            key="free_trial_btn",
-            use_container_width=True,
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown(
-            '<div class="trial-note">No sign-up · No credit card · All 4 tools included</div>',
-            unsafe_allow_html=True,
-        )
 
     # Auth Gate — placed BEFORE pricing so returning users don't scroll past it
     st.markdown("""
