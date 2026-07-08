@@ -245,6 +245,7 @@ def activate_free_trial():
     st.session_state.user_credits   = 0          # trial has no credit balance
     st.session_state.user_email     = "Free Trial"
     st.session_state.user_row       = None
+    st.session_state._scroll_reset_pending = True
     st.rerun()
 
 
@@ -281,6 +282,7 @@ def process_key_login(entered_key: str) -> None:
         st.session_state.user_credits   = record["credits"]
         st.session_state.user_email     = record["email"]
         st.session_state.user_row       = record["row_index"]
+        st.session_state._scroll_reset_pending = True
 
     st.rerun()
 
