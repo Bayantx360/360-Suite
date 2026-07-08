@@ -870,11 +870,11 @@ def render_home():
       <h1 class="hero-h1">
         Generate Custom Dataset, Clean and Fix EFA in Raw Data, and
         <em> Run Panel Regression</em> on your Mobile Phone
-        <span class="h1-muted">Free. In your browser. Right now.</span>
+        <span class="h1-muted"><br>● No Complex Installation ⚙️ ● No Code/Syntax 📟 ● Works on Mobile phones and laptops via web browser📲</span>
       </h1>
 
       <p class="hero-sub">
-        <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — four specialised tools under one
+        <strong> PanelStatX, DataSynthX, DataCleanX, EFActor</strong> — four specialised tools under one
         access key. Full analysis is always free. Pay only when you need an
         <strong>AI-written interpretation</strong> or a <strong>publication-ready export</strong>.
       </p>
