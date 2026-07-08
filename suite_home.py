@@ -14,6 +14,7 @@ Routing architecture (Streamlit V2 MPA):
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 import sys, os
 
 # ── Path resolution so `shared` is importable ─────────────────────────────────
@@ -660,6 +661,26 @@ def render_home():
 
     if st.session_state.get("access_granted"):
 
+        # A login/trial-activation just happened. Clear any leftover URL
+        # hash (e.g. #key-gate from the landing page) and scroll to top —
+        # otherwise the browser keeps trying to anchor to an element that
+        # no longer exists on this view, leaving blank space above the nav.
+        if st.session_state.pop("_scroll_reset_pending", False):
+            components.html(
+                """
+                <script>
+                    window.parent.scrollTo(0, 0);
+                    if (window.parent.location.hash) {
+                        window.parent.history.replaceState(
+                            null, '',
+                            window.parent.location.pathname + window.parent.location.search
+                        );
+                    }
+                </script>
+                """,
+                height=0,
+            )
+
         # Background layers
         st.markdown('<div class="lp-bg"></div><div class="lp-grid"></div>', unsafe_allow_html=True)
 
@@ -687,7 +708,7 @@ def render_home():
             <div class="nav-brand">
                 <div class="nav-logo">⬡</div>
                 <div>
-                    StaX<span class="brand-accent">360</span> Suite
+                    x<span class="brand-accent">360</span> Suite
                     <div class="brand-sub">Unified Analytics Platform</div>
                 </div>
             </div>
@@ -701,7 +722,7 @@ def render_home():
         st.markdown("""
         <div class="selector-wrap lp-wrap">
           <div class="selector-header fi d2">
-            <span class="selector-greeting">StaX360: App Selector</span>
+            <span class="selector-greeting">⬡ x360-Suite — App Selector</span>
             <div class="selector-title">Which tool are you<br/>working with today?</div>
             <p class="selector-sub">
                 Your single access key works across the entire suite.<br/>
