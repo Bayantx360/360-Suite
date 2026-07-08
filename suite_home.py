@@ -868,8 +868,8 @@ def render_home():
       </div>
 
       <h1 class="hero-h1">
-        Run Panel Regressions,
-        <em>EFA &amp; More</em>
+        Generate Custom Dataset, Clean Dataset, Diagnose & Fix EFA, Generate Custom Datasets and
+        <em> Run Panel Regression</em> Right on your Mobile Phone
         <span class="h1-muted">Free. In your browser. Right now.</span>
       </h1>
 
