@@ -44,6 +44,22 @@ def render_home():
     if _goto:
         st.switch_page(_goto)
 
+    # A "buy credits" / "top up" prompt on one of the tool pages sent the user
+    # here. Scroll down to the pricing cards once the page has mounted so they
+    # land directly on the credit options instead of the top of the page.
+    if st.session_state.pop("_scroll_to_pricing", False):
+        components.html(
+            """
+            <script>
+                setTimeout(function() {
+                    const el = window.parent.document.getElementById('pricing');
+                    if (el) { el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+                }, 400);
+            </script>
+            """,
+            height=0,
+        )
+
     # ═══════════════════════════════════════════════════════════════════════════════
     # LANDING PAGE CSS
     # ═══════════════════════════════════════════════════════════════════════════════
@@ -1049,7 +1065,7 @@ def render_home():
 
     # Pricing — below auth gate
     st.markdown("""
-    <div class="lp-pricing fi d5">
+    <div id="pricing" class="lp-pricing fi d5">
       <div class="section-head">
         <div class="section-title">Buy Credits & <em>Access More</em> Features</div>
         <span class="section-label">Pay-as-you-go credits · No monthly subscription · Credits never expire</span>
