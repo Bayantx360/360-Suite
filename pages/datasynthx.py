@@ -747,7 +747,9 @@ with tab3:
             render_locked_banner("AI Quality Analysis", is_trial_user=True)
             _, uc, _ = st.columns([1, 2, 1])
             with uc:
-                st.link_button("⬡ Upgrade to Paid Plan →", "https://x.com/bayantx360", use_container_width=True)
+                if st.button("⬡ Upgrade to Paid Plan →", use_container_width=True, key="buycredits_7"):
+                    st.session_state["_scroll_to_pricing"] = True
+                    st.switch_page(st.session_state["_home_page"])
         else:
             credits_left = st.session_state.user_credits
             use_case_input = st.text_area(
@@ -870,7 +872,9 @@ with tab4:
             render_locked_banner("CSV & Excel Export", is_trial_user=True)
             _, uc, _ = st.columns([1, 2, 1])
             with uc:
-                st.link_button("⬡ Upgrade to Paid Plan →", "https://x.com/bayantx360", use_container_width=True)
+                if st.button("⬡ Upgrade to Paid Plan →", use_container_width=True, key="buycredits_8"):
+                    st.session_state["_scroll_to_pricing"] = True
+                    st.switch_page(st.session_state["_home_page"])
         else:
             # Credit cost info
             if dl_cost == 0:
@@ -918,7 +922,9 @@ with tab4:
                             but you have {credits_left}. Please top up your plan.
                         </div>
                         """, unsafe_allow_html=True)
-                        st.link_button("Get More Credits →", "https://x.com/bayantx360", use_container_width=True)
+                        if st.button("Get More Credits →", use_container_width=True, key="buycredits_9"):
+                            st.session_state["_scroll_to_pricing"] = True
+                            st.switch_page(st.session_state["_home_page"])
                     else:
                         try:
                             data = data_fn()

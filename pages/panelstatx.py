@@ -954,7 +954,9 @@ with tab_results:
             render_locked_banner("DOCX Report Export", is_trial_user=True)
             _, uc, _ = st.columns([1, 2, 1])
             with uc:
-                st.link_button("Upgrade — Get Access Key →", "https://x.com/bayantx360", use_container_width=True)
+                if st.button("Upgrade — Get Access Key →", use_container_width=True, key="buycredits_10"):
+                    st.session_state["_scroll_to_pricing"] = True
+                    st.switch_page(st.session_state["_home_page"])
         else:
             dl_col1, dl_col2 = st.columns([1, 2])
             with dl_col1:
@@ -1156,7 +1158,9 @@ Coefficients:
             render_locked_banner("AI Explainer", is_trial_user=True)
             _, uc, _ = st.columns([1, 2, 1])
             with uc:
-                st.link_button("⬡  Upgrade to Paid Plan →", "https://x.com/bayantx360", use_container_width=True)
+                if st.button("⬡  Upgrade to Paid Plan →", use_container_width=True, key="buycredits_11"):
+                    st.session_state["_scroll_to_pricing"] = True
+                    st.switch_page(st.session_state["_home_page"])
         else:
             credits_left = st.session_state.user_credits
             col_explain, col_custom = st.columns([3, 2])

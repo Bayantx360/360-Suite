@@ -686,7 +686,9 @@ with st.sidebar:
             </div>
         </div>
         """, unsafe_allow_html=True)
-        st.link_button("Get Access Key →", "https://x.com/bayantx360", use_container_width=True)
+        if st.button("Get Access Key →", use_container_width=True, key="buycredits_1"):
+            st.session_state["_scroll_to_pricing"] = True
+            st.switch_page(st.session_state["_home_page"])
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -709,9 +711,11 @@ if is_trial():
                 font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--warn);line-height:1.7;margin-bottom:16px;">
         ⚡ <strong style="color:var(--text);">Free Trial mode</strong> — all analysis runs are unlimited.
         Data export &amp; DOCX report require a paid access key.
-        <a href="https://x.com/bayantx360" style="color:var(--accent);margin-left:4px;">Get access →</a>
     </div>
     """, unsafe_allow_html=True)
+    if st.button("Get access →", key="buycredits_trial_banner"):
+        st.session_state["_scroll_to_pricing"] = True
+        st.switch_page(st.session_state["_home_page"])
 
 st.markdown("---")
 
@@ -1146,7 +1150,9 @@ else:
         render_locked_banner("Data Export & DOCX Report", is_trial_user=True)
         _, uc, _ = st.columns([1, 2, 1])
         with uc:
-            st.link_button("◈ Get Access Key →", "https://x.com/bayantx360", use_container_width=True)
+            if st.button("◈ Get Access Key →", use_container_width=True, key="buycredits_2"):
+                st.session_state["_scroll_to_pricing"] = True
+                st.switch_page(st.session_state["_home_page"])
     else:
         col_e1, col_e2, col_e3 = st.columns(3)
 
@@ -1156,7 +1162,9 @@ else:
             st.info(f"{n_clean} rows × {len(S.df_working.columns)} cols  **Cost: {cost_clean} credit{'s' if cost_clean>1 else ''}**")
             if current_credits < cost_clean:
                 st.warning(f"⚠️ Need {cost_clean} credits ({current_credits} remaining).")
-                st.link_button("Top up →", "https://x.com/bayantx360", use_container_width=True)
+                if st.button("Top up →", use_container_width=True, key="buycredits_3"):
+                    st.session_state["_scroll_to_pricing"] = True
+                    st.switch_page(st.session_state["_home_page"])
             else:
                 if st.button(f"⬇ Download Cleaned Data ({cost_clean} cr)", use_container_width=True, key="dl_clean_btn"):
                     handle_credit_deduction(cost_clean, app="EFActor", action="Cleaned Data Export")
@@ -1173,7 +1181,9 @@ else:
                 st.info(f"{n_syn} rows × {len(syn_export.columns)} cols  **Cost: {cost_syn} credit{'s' if cost_syn>1 else ''}**")
                 if current_credits < cost_syn:
                     st.warning(f"⚠️ Need {cost_syn} credits ({current_credits} remaining).")
-                    st.link_button("Top up →", "https://x.com/bayantx360", use_container_width=True)
+                    if st.button("Top up →", use_container_width=True, key="buycredits_4"):
+                        st.session_state["_scroll_to_pricing"] = True
+                        st.switch_page(st.session_state["_home_page"])
                 else:
                     if st.button(f"⬇ Download Synthetic Data ({cost_syn} cr)", use_container_width=True, key="dl_syn_btn"):
                         handle_credit_deduction(cost_syn, app="EFActor", action="Synthetic Data Export")
@@ -1192,7 +1202,9 @@ else:
                 st.info(f"Full EFA + CFA Word report (.docx)  **Cost: {REPORT_COST} credit**")
                 if current_credits < REPORT_COST:
                     st.warning("⚠️ Insufficient credits.")
-                    st.link_button("Top up →", "https://x.com/bayantx360", use_container_width=True)
+                    if st.button("Top up →", use_container_width=True, key="buycredits_5"):
+                        st.session_state["_scroll_to_pricing"] = True
+                        st.switch_page(st.session_state["_home_page"])
                 else:
                     if st.button(f"🔨 Build Word Report ({REPORT_COST} cr)", use_container_width=True, key="build_rpt"):
                         with st.spinner("Compiling Word report…"):
@@ -1220,7 +1232,9 @@ else:
         st.info(f"Cleaned data + synthetic data + Word report + loadings CSV + model spec  **Cost: {zip_cost} credits**")
         if current_credits < zip_cost:
             st.warning(f"⚠️ Need {zip_cost} credits ({current_credits} remaining).")
-            st.link_button("Top up credits →", "https://x.com/bayantx360", use_container_width=True)
+            if st.button("Top up credits →", use_container_width=True, key="buycredits_6"):
+                st.session_state["_scroll_to_pricing"] = True
+                st.switch_page(st.session_state["_home_page"])
         else:
             if st.button(f"⬇ Build & Download ZIP ({zip_cost} cr)", use_container_width=True, key="dl_zip_btn"):
                 zip_buffer = io.BytesIO()
