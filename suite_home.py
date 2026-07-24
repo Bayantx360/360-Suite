@@ -1171,17 +1171,6 @@ def render_home():
     """, unsafe_allow_html=True)
 
     
-    st.markdown("""
-    <div class="lp-footer fi d8">
-        <div class="footer-brand">Sta<span class="ft">X360</span></div>
-        <div class="footer-links">
-            <a href="https://x.com/bayantx360" target="_blank">Twitter / X</a>
-            <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">User Guide</a>
-            <a href="mailto:bayantx360@gmail.com">Support</a>
-        </div>
-        <div class="footer-copy">StaX360 · Unified Analytics Suite · Credit-based access</div>
-    </div>
-    """, unsafe_allow_html=True)
 
     # ── Button handlers ────────────────────────────────────────────────────────────
     if free_trial_btn:
