@@ -935,7 +935,7 @@ def render_home():
 
       <div class="hero-eyebrow">
         <span class="dot-live"></span>
-        Stata costs $800/year. StaX360 doesn't.
+        StaX360
       </div>
 
       <h1 class="hero-h1">
