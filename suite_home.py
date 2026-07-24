@@ -107,6 +107,12 @@ def render_home():
     [data-testid="block-container"] { padding: 0 !important; max-width: 100% !important; }
     section.main > div { padding: 0 !important; }
 
+    /* ── Tighter vertical rhythm — Streamlit's default per-element gap
+       was leaving large dead zones between stacked landing-page blocks
+       (CTA button → trust banner → testimonials CTA → key gate). ── */
+    [data-testid="stVerticalBlock"] { gap: 0.3rem !important; }
+    [data-testid="stElementContainer"] { margin-bottom: 0 !important; }
+
     /* ── Ambient background ── */
     .lp-bg {
         position: fixed; inset: 0; z-index: 0;
@@ -944,7 +950,7 @@ def render_home():
             unsafe_allow_html=True,
         )
     st.markdown(
-        '<div style="text-align:center;margin-top:14px;">'
+        '<div style="text-align:center;margin-top:4px;">'
         '<a href="#key-gate" style="font-family:var(--mono);font-size:0.68rem;color:var(--teal);'
         'text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(0,229,200,0.3);padding-bottom:2px;">'
         'Already have a key? →</a></div>',
@@ -965,7 +971,7 @@ def render_home():
     st.html(f"""
     <div style="
         max-width:860px; margin:0 auto;
-        padding: 0 clamp(20px,5vw,48px) 32px;
+        padding: 6px clamp(20px,5vw,48px) 10px;
         display:flex; justify-content:center;
     ">
       <div style="
@@ -1036,7 +1042,7 @@ def render_home():
 
     # Auth Gate — placed BEFORE pricing so returning users don't scroll past it
     st.markdown("""
-    <div id="key-gate" class="lp-gate fi d6">
+    <div id="key-gate" class="lp-gate fi d6" style="margin-top:6px;">
       <div class="gate-card">
         <div class="gate-lock">🔑</div>
         <div class="gate-title">Already have a key?</div>
