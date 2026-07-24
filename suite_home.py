@@ -927,22 +927,6 @@ def render_home():
     # Background
     st.markdown('<div class="lp-bg"></div><div class="lp-grid"></div>', unsafe_allow_html=True)
 
-    # Navbar
-    st.markdown("""
-    <nav class="lp-nav fi d1">
-        <div class="nav-brand">
-            <div class="nav-logo">⬡</div>
-            <div>
-                <span class="brand-accent">Sta</span>X360
-                <div class="brand-sub">Unified Analytics Platform</div>
-            </div>
-        </div>
-        <div class="nav-right">
-            <span class="nav-tag">4+ Specialised Tools</span>
-            <span class="nav-tag nav-tag-live"><span class="dot-live"></span>v2.0 Live</span>
-        </div>
-    </nav>
-    """, unsafe_allow_html=True)
 
 
     # Hero
