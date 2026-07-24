@@ -1159,6 +1159,18 @@ def render_home():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Footer
+  
+    st.markdown("""
+    <div class="gate-links">
+         <a href="mailto:bayantx360@gmail.com">👤 Contact Sales</a>
+         <span class="gate-sep">|</span>
+         <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">📋 User Guide</a>
+         <span class="gate-sep">|</span>
+         <a href="mailto:bayantx360@gmail.com">⚙ Support</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+    
     st.markdown("""
     <div class="lp-footer fi d8">
         <div class="footer-brand">Sta<span class="ft">X360</span></div>
