@@ -43,34 +43,35 @@ init_session_state()
 # ══════════════════════════════════════════════════════════════════════════════
 TESTIMONIALS = [
     {
-        "name": "PLACEHOLDER — replace with real user/institution",
-        "person": "PLACEHOLDER — Name (Role)",
+        "name": "Adrian",
+        "person": "Researcher",
         "photo": "user1.jpeg",
         "rating": 5,
-        "comment": "PLACEHOLDER — swap in an actual quote from a StaX360 user "
-                   "describing how PanelStatX, DataSynthX, DataCleanX or EFActor "
-                   "helped their research or analysis.",
+        "comment": "StaX360 is such a great no-code useful tool with so much to offer."
+                   "The panelstatx within it is a big suprise for how it conveniently analyse panel data.",
     },
     {
-        "name": "PLACEHOLDER — replace with real user/institution",
-        "person": "PLACEHOLDER — Name (Role)",
+        "name": "Olivia",
+        "person": "MSc Student",
         "photo": "user2.jpeg",
         "rating": 5,
-        "comment": "PLACEHOLDER — swap in an actual quote here.",
+        "comment": "StatX360 really helped me in completing my dissertation on time "
+                   "and at minimal cost. I was literally running my analysis and producing report on my mobile phone with this tool.",
     },
     {
-        "name": "PLACEHOLDER — replace with real user/institution",
-        "person": "PLACEHOLDER — Name (Role)",
+        "name": "Shiela",
+        "person": "Economist",
         "photo": "user3.jpeg",
         "rating": 5,
-        "comment": "PLACEHOLDER — swap in an actual quote here.",
+        "comment": "This is tool is highly useful and easy to use without the need to install complex software or pay huge license fee. "
+                   "It a stable and perfect alternative to Stata for anyone who want to do their analysis without the need to write code syntax.",
     },
     {
-        "name": "PLACEHOLDER — replace with real user/institution",
-        "person": "PLACEHOLDER — Name (Role)",
+        "name": "Lee Kang",
+        "person": "PhD Researcher",
         "photo": "user4.jpeg",
         "rating": 5,
-        "comment": "PLACEHOLDER — swap in an actual quote here.",
+        "comment": "StaX360 is one of the best no-code statistical tool for anyone who want to save time and conveniently analyse their data.",
     },
 ]
 
