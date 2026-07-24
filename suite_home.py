@@ -646,16 +646,21 @@ def render_home():
     .sel-check-purple{color:var(--purple)}
     .sel-check-amber{color:var(--amber)}
 
-    /* ── App selector: horizontal swipe carousel on mobile ──
-       Streamlit's own st.columns() row (stHorizontalBlock) switches to
-       flex-direction:column below ~640px, which is what stacked the 4
-       cards vertically. :has() lets us target *only* the row that holds
-       .sel-card without touching st.columns() anywhere else in the app,
-       force it to stay a horizontal flex row, and turn it into a native
+    /* ── Card carousels: horizontal swipe on mobile ──
+       Covers both the app-selector cards (.sel-card) and the pricing
+       cards (.price-card) - both use st.columns() with a real
+       st.button/st.link_button inside each column, so the row can't be
+       rebuilt as static HTML. Streamlit's own st.columns() row
+       (stHorizontalBlock) switches to flex-direction:column below
+       ~640px, which is what stacked the cards vertically. :has() lets
+       us target *only* the rows that hold one of these card types
+       without touching st.columns() anywhere else in the app, force
+       them to stay a horizontal flex row, and turn them into a native
        scroll-snap carousel - each card peeks the edge of the next one
-       so it reads as swipeable, and st.button still works normally
+       so it reads as swipeable, and the buttons still work normally
        since we never leave Streamlit's own column/button structure. */
-    [data-testid="stHorizontalBlock"]:has(.sel-card) {
+    [data-testid="stHorizontalBlock"]:has(.sel-card),
+    [data-testid="stHorizontalBlock"]:has(.price-card) {
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
         scroll-snap-type: x mandatory !important;
@@ -664,8 +669,10 @@ def render_home():
         padding: 4px 6vw 14px 6vw !important;
         margin: 0 -6vw !important;
     }
-    [data-testid="stHorizontalBlock"]:has(.sel-card)::-webkit-scrollbar { display: none !important; }
-    [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
+    [data-testid="stHorizontalBlock"]:has(.sel-card)::-webkit-scrollbar,
+    [data-testid="stHorizontalBlock"]:has(.price-card)::-webkit-scrollbar { display: none !important; }
+    [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"],
+    [data-testid="stHorizontalBlock"]:has(.price-card) [data-testid="column"] {
         flex: 0 0 84vw !important;
         min-width: 84vw !important;
         max-width: 84vw !important;
@@ -678,11 +685,13 @@ def render_home():
         text-transform: uppercase; margin: -10px 0 16px;
     }
     @media (min-width: 780px) {
-        [data-testid="stHorizontalBlock"]:has(.sel-card) {
+        [data-testid="stHorizontalBlock"]:has(.sel-card),
+        [data-testid="stHorizontalBlock"]:has(.price-card) {
             overflow-x: visible !important;
             padding: 0 !important; margin: 0 !important;
         }
-        [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
+        [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"],
+        [data-testid="stHorizontalBlock"]:has(.price-card) [data-testid="column"] {
             flex: 1 1 0 !important; min-width: 0 !important; max-width: none !important;
         }
         .swipe-hint { display: none !important; }
@@ -1128,6 +1137,8 @@ def render_home():
       </div>
     </div>
     """, unsafe_allow_html=True)
+
+    st.markdown('<span class="swipe-hint">← Swipe to see all plans →</span>', unsafe_allow_html=True)
 
     pc1, pc2, pc3 = st.columns(3, gap="small")
 
