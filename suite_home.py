@@ -935,7 +935,7 @@ def render_home():
 
       <div class="hero-eyebrow">
         <span class="dot-live"></span>
-        StaX360
+        StaX360 📈
       </div>
 
       <h1 class="hero-h1">
