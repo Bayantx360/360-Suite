@@ -1046,7 +1046,7 @@ def render_home():
           No recurring billing. Credits never expire.
         </div>
         <div class="key-format">
-            <span class="kf-icon">◈</span>
+            <span class="kf-icon">🔑</span>
             Key format:&nbsp; BTX-XXXX-XXXX-XXXX
         </div>
         <div class="gate-form">
@@ -1066,7 +1066,7 @@ def render_home():
             key="suite_key_input",
         )
         unlock_btn = st.button(
-            "⬡  Unlock the Suite",
+            "🔑  Unlock the Suite",
             use_container_width=True,
             type="primary",
             key="unlock_btn",
