@@ -70,7 +70,7 @@ def render_home():
 
     /* ── Tokens ── */
     :root {
-        --bg:      #05070f;
+        --bg:      #0a0c10;
         --s1:      #0b0e1a;
         --s2:      #10141f;
         --s3:      #161b28;
@@ -87,7 +87,7 @@ def render_home():
         --display: 'Bricolage Grotesque', sans-serif;
     }
 
-    html, body, [data-testid="stAppViewContainer"] {
+    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
         background: var(--bg) !important;
         color: var(--text) !important;
         font-family: var(--mono) !important;
@@ -96,6 +96,14 @@ def render_home():
     [data-testid="stSidebarCollapsedControl"],
     [data-testid="collapsedControl"],
     footer, #MainMenu, [data-testid="stToolbar"] { display: none !important; }
+    /* stToolbar is hidden above, but stHeader/stDecoration are the
+       containers that hold it - hiding the toolbar's contents doesn't
+       remove the header bar's own background, which is what caused the
+       grey seam at the top of the page. Force those to match too. */
+    [data-testid="stHeader"], [data-testid="stDecoration"] {
+        background: var(--bg) !important;
+        background-color: var(--bg) !important;
+    }
     [data-testid="block-container"] { padding: 0 !important; max-width: 100% !important; }
     section.main > div { padding: 0 !important; }
 
