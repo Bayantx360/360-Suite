@@ -944,23 +944,6 @@ def render_home():
     </nav>
     """, unsafe_allow_html=True)
 
-    # Ticker
-    TICKER_ITEMS = [
-        "Panel Data Econometrics", "Synthetic Data Generation", "Factor Analysis (EFA/CFA)",
-        "Unified Access Key", "AI Explainer", "DOCX Report Export",
-        "Breusch-Pagan Diagnostics", "Hausman Specification Test", "Trust Metric Validation",
-        "Credit-Based Pay-As-You-Go", "No Monthly Subscription", "Instant Free Trial",
-        "Auto-Fix Data Issues", "Varimax & Oblimin Rotation", "Correlation Preservation Score",
-    ]
-    ticker_html = "".join(
-        f'<span class="t-item"><span class="t-dot">◆</span>{item}</span>'
-        for item in TICKER_ITEMS
-    )
-    st.markdown(f"""
-    <div class="lp-ticker fi d1">
-        <div class="ticker-track">{ticker_html}{ticker_html}</div>
-    </div>
-    """, unsafe_allow_html=True)
 
     # Hero
     st.markdown("""
