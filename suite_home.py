@@ -70,7 +70,7 @@ def render_home():
 
     /* ── Tokens ── */
     :root {
-        --bg:      #0a0c10;
+        --bg:      #05070f;
         --s1:      #0b0e1a;
         --s2:      #10141f;
         --s3:      #161b28;
@@ -87,7 +87,7 @@ def render_home():
         --display: 'Bricolage Grotesque', sans-serif;
     }
 
-    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+    html, body, [data-testid="stAppViewContainer"] {
         background: var(--bg) !important;
         color: var(--text) !important;
         font-family: var(--mono) !important;
@@ -96,14 +96,6 @@ def render_home():
     [data-testid="stSidebarCollapsedControl"],
     [data-testid="collapsedControl"],
     footer, #MainMenu, [data-testid="stToolbar"] { display: none !important; }
-    /* stToolbar is hidden above, but stHeader/stDecoration are the
-       containers that hold it - hiding the toolbar's contents doesn't
-       remove the header bar's own background, which is what caused the
-       grey seam at the top of the page. Force those to match too. */
-    [data-testid="stHeader"], [data-testid="stDecoration"] {
-        background: var(--bg) !important;
-        background-color: var(--bg) !important;
-    }
     [data-testid="block-container"] { padding: 0 !important; max-width: 100% !important; }
     section.main > div { padding: 0 !important; }
 
@@ -646,6 +638,48 @@ def render_home():
     .sel-check-purple{color:var(--purple)}
     .sel-check-amber{color:var(--amber)}
 
+    /* ── App selector: horizontal swipe carousel on mobile ──
+       Streamlit's own st.columns() row (stHorizontalBlock) switches to
+       flex-direction:column below ~640px, which is what stacked the 4
+       cards vertically. :has() lets us target *only* the row that holds
+       .sel-card without touching st.columns() anywhere else in the app,
+       force it to stay a horizontal flex row, and turn it into a native
+       scroll-snap carousel - each card peeks the edge of the next one
+       so it reads as swipeable, and st.button still works normally
+       since we never leave Streamlit's own column/button structure. */
+    [data-testid="stHorizontalBlock"]:has(.sel-card) {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        padding: 4px 6vw 14px 6vw !important;
+        margin: 0 -6vw !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(.sel-card)::-webkit-scrollbar { display: none !important; }
+    [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
+        flex: 0 0 84vw !important;
+        min-width: 84vw !important;
+        max-width: 84vw !important;
+        scroll-snap-align: center !important;
+    }
+    .swipe-hint {
+        display: block; text-align: center;
+        font-family: var(--mono); font-size: 0.62rem;
+        color: var(--muted); letter-spacing: 0.08em;
+        text-transform: uppercase; margin: -10px 0 16px;
+    }
+    @media (min-width: 780px) {
+        [data-testid="stHorizontalBlock"]:has(.sel-card) {
+            overflow-x: visible !important;
+            padding: 0 !important; margin: 0 !important;
+        }
+        [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
+            flex: 1 1 0 !important; min-width: 0 !important; max-width: none !important;
+        }
+        .swipe-hint { display: none !important; }
+    }
+
     /* Selector CTA buttons */
     .sel-btn-teal .stButton > button{background:linear-gradient(135deg,rgba(0,229,200,0.12),rgba(0,229,200,0.06))!important;border:1px solid rgba(0,229,200,0.3)!important;color:var(--teal)!important;font-family:var(--display)!important;font-weight:700!important;border-radius:10px!important;transition:all .2s!important}
     .sel-btn-teal .stButton > button:hover{background:var(--teal)!important;color:#04090f!important;box-shadow:0 4px 20px rgba(0,229,200,0.3)!important}
@@ -812,6 +846,8 @@ def render_home():
             },
           
         ]
+
+        st.markdown('<span class="swipe-hint">← Swipe to see all 4 tools →</span>', unsafe_allow_html=True)
 
         cols = st.columns(4, gap="medium")
 
