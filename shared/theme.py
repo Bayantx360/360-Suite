@@ -1,1234 +1,418 @@
 """
-suite_home.py
+shared/theme.py
 ══════════════════════════════════════════════════════════════════════
-Bayantx360 Suite — Landing Page, Auth Gate & App Selector
+Bayantx360 Suite — Unified Design System
 ══════════════════════════════════════════════════════════════════════
 
-Routing architecture (Streamlit V2 MPA):
-  • st.navigation() must be the FIRST Streamlit call — before set_page_config.
-  • render_home() is a callable passed to st.Page() to avoid the infinite
-    re-exec loop that would occur if suite_home.py were registered by path.
-  • _pg.run() activates the router; for the home URL it calls render_home().
-  • Launch buttons set st.session_state["_goto"] + st.rerun(). _goto is
-    consumed at the top of render_home() so st.switch_page() fires cleanly.
+Single CSS string + Plotly theme used by all apps in the suite.
+Ensures pixel-perfect visual consistency across PanelStatX,
+DataSynthX, EFActor, and any future apps added to the suite.
+
+Usage in each app:
+    from shared.theme import apply_suite_css, apply_theme, PLOTLY_THEME
+    apply_suite_css()          # call once, after st.set_page_config()
+    fig = apply_theme(fig)     # wrap every Plotly figure
 """
 
 import streamlit as st
-import streamlit.components.v1 as components
-import sys, os
 
-# ── Path resolution so `shared` is importable ─────────────────────────────────
-sys.path.insert(0, os.path.dirname(__file__))
 
-from shared.auth import (
-    init_session_state,
-    activate_free_trial,
-    process_key_login,
-    sign_out,
-    is_trial,
+# ── Design tokens ──────────────────────────────────────────────────────────────
+TOKENS = {
+    "bg":       "#0a0c10",
+    "surface":  "#111318",
+    "surface2": "#181c24",
+    "border":   "#1f2535",
+    "accent":   "#00e5c8",   # teal — primary CTA, highlights
+    "accent2":  "#7c6df0",   # purple — secondary accent
+    "accent3":  "#f05c7c",   # pink — danger / locked
+    "text":     "#e2e8f4",
+    "muted":    "#6b7a9a",
+    "success":  "#22d3a0",
+    "warn":     "#f5a623",
+}
+
+
+# ── Plotly theme ───────────────────────────────────────────────────────────────
+PLOTLY_THEME = dict(
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(family="DM Mono, monospace", color="#6b7a9a", size=11),
+    xaxis=dict(
+        gridcolor="#1f2535", linecolor="#1f2535",
+        zerolinecolor="#1f2535", tickfont=dict(color="#6b7a9a"),
+    ),
+    yaxis=dict(
+        gridcolor="#1f2535", linecolor="#1f2535",
+        zerolinecolor="#1f2535", tickfont=dict(color="#6b7a9a"),
+    ),
+    colorway=["#00e5c8", "#7c6df0", "#f05c7c", "#f5a623", "#22d3a0", "#60a5fa"],
+    margin=dict(l=40, r=20, t=40, b=40),
+    legend=dict(
+        bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#6b7a9a", size=10),
+    ),
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
-# All home page content lives inside render_home() so it can be passed as a
-# callable to st.Page(). This avoids re-exec'ing this file when _pg.run() fires.
-# ─────────────────────────────────────────────────────────────────────────────
-def render_home():
-    """Landing page, auth gate, and app selector — all in one."""
 
-    # Init session
-    init_session_state()
-
-    # Deferred navigation: consume _goto BEFORE any rendering so
-    # st.switch_page() fires at the top of a clean rerun.
-    _goto = st.session_state.pop("_goto", None)
-    if _goto:
-        st.switch_page(_goto)
-
-    # A "buy credits" / "top up" prompt on one of the tool pages sent the user
-    # here. Scroll down to the pricing cards once the page has mounted so they
-    # land directly on the credit options instead of the top of the page.
-    if st.session_state.pop("_scroll_to_pricing", False):
-        components.html(
-            """
-            <script>
-                setTimeout(function() {
-                    const el = window.parent.document.getElementById('pricing');
-                    if (el) { el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
-                }, 400);
-            </script>
-            """,
-            height=0,
-        )
-
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # LANDING PAGE CSS
-    # ═══════════════════════════════════════════════════════════════════════════════
-
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
-
-    /* ── Tokens ── */
-    :root {
-        --bg:      #05070f;
-        --s1:      #0b0e1a;
-        --s2:      #10141f;
-        --s3:      #161b28;
-        --border:  rgba(255,255,255,0.06);
-        --border2: rgba(255,255,255,0.11);
-        --teal:    #00e5c8;
-        --purple:  #7c6df0;
-        --pink:    #f05c7c;
-        --amber:   #f5a623;
-        --text:    #e4eaf8;
-        --text2:   #9aa3be;
-        --muted:   #4e576e;
-        --mono:    'DM Mono', monospace;
-        --display: 'Bricolage Grotesque', sans-serif;
-    }
-
-    html, body, [data-testid="stAppViewContainer"] {
-        background: var(--bg) !important;
-        color: var(--text) !important;
-        font-family: var(--mono) !important;
-    }
-    [data-testid="stSidebar"],
-    [data-testid="stSidebarCollapsedControl"],
-    [data-testid="collapsedControl"],
-    footer, #MainMenu, [data-testid="stToolbar"] { display: none !important; }
-    [data-testid="block-container"] { padding: 0 !important; max-width: 100% !important; }
-    section.main > div { padding: 0 !important; }
-
-    /* ── Ambient background ── */
-    .lp-bg {
-        position: fixed; inset: 0; z-index: 0;
-        background: var(--bg);
-    }
-    .lp-bg::before {
-        content: ''; position: absolute; inset: -60%;
-        background:
-            radial-gradient(ellipse 72% 55% at 50% -8%,  rgba(0,229,200,0.06) 0%, transparent 65%),
-            radial-gradient(ellipse 55% 70% at 100% 60%, rgba(124,109,240,0.045) 0%, transparent 60%),
-            radial-gradient(ellipse 45% 45% at 0% 80%,   rgba(0,229,200,0.028) 0%, transparent 55%);
-        animation: bgDrift 30s ease-in-out infinite alternate;
-    }
-    @keyframes bgDrift { 0%{transform:scale(1) rotate(0deg)} 100%{transform:scale(1.06) rotate(1.5deg)} }
-
-    .lp-grid {
-        position: fixed; inset: 0; z-index: 0; pointer-events: none;
-        background-image:
-            linear-gradient(rgba(0,229,200,0.016) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,229,200,0.016) 1px, transparent 1px);
-        background-size: 72px 72px;
-        mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 20%, transparent 80%);
-    }
-
-    /* ── All content above bg ── */
-    .lp-wrap { position: relative; z-index: 10; }
-
-    /* ── Animations ── */
-    @keyframes fi { to { opacity: 1; transform: translateY(0); } }
-    .fi { opacity: 0; transform: translateY(20px); animation: fi 0.65s cubic-bezier(0.22,1,0.36,1) forwards; }
-    .d1{animation-delay:.05s} .d2{animation-delay:.12s} .d3{animation-delay:.20s}
-    .d4{animation-delay:.28s} .d5{animation-delay:.36s} .d6{animation-delay:.44s}
-    .d7{animation-delay:.52s} .d8{animation-delay:.60s}
-
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.85)} }
-    .dot-live {
-        display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-        background: var(--teal); animation: pulse 2s ease-in-out infinite;
-        vertical-align: middle; margin-right: 7px;
-    }
-
-    /* ── Navbar ── */
-    .lp-nav {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 18px clamp(20px,5vw,64px);
-        border-bottom: 1px solid var(--border);
-        background: rgba(5,7,15,0.88);
-        backdrop-filter: blur(24px);
-        position: sticky; top: 0; z-index: 100;
-    }
-    .nav-brand {
-        display: flex; align-items: center; gap: 12px;
-        font-family: var(--display); font-weight: 800; font-size: 1.18rem;
-        color: var(--text); letter-spacing: -0.03em;
-    }
-    .nav-logo {
-        width: 34px; height: 34px; border-radius: 9px;
-        background: linear-gradient(135deg, rgba(0,229,200,0.18), rgba(124,109,240,0.18));
-        border: 1px solid rgba(0,229,200,0.28);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem; flex-shrink: 0;
-    }
-    .brand-accent { color: var(--teal); }
-    .brand-sub {
-        font-family: var(--mono); font-size: 0.56rem;
-        letter-spacing: 0.14em; text-transform: uppercase;
-        color: var(--muted); margin-top: 1px;
-    }
-    .nav-right { display: flex; align-items: center; gap: 10px; }
-    .nav-tag {
-        font-family: var(--mono); font-size: 0.56rem;
-        letter-spacing: 0.1em; text-transform: uppercase;
-        padding: 5px 13px; border-radius: 100px;
-        border: 1px solid var(--border); color: var(--muted);
-    }
-    .nav-tag-live {
-        border-color: rgba(0,229,200,0.28); color: var(--teal);
-        background: rgba(0,229,200,0.05);
-    }
-    @media(max-width:600px){.nav-right{display:none}}
-
-    /* ── Ticker ── */
-    .lp-ticker {
-        border-bottom: 1px solid var(--border);
-        background: var(--s1); overflow: hidden;
-        padding: 9px 0; white-space: nowrap; position: relative;
-    }
-    .lp-ticker::before,.lp-ticker::after {
-        content:''; position:absolute; top:0; bottom:0; width:100px; z-index:2;
-    }
-    .lp-ticker::before{left:0;background:linear-gradient(90deg,var(--s1),transparent)}
-    .lp-ticker::after{right:0;background:linear-gradient(-90deg,var(--s1),transparent)}
-    .ticker-track { display:inline-flex; animation:tickerScroll 40s linear infinite; }
-    @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .t-item {
-        font-family:var(--mono); font-size:0.56rem; color:var(--muted);
-        letter-spacing:0.12em; padding:0 30px;
-        display:inline-flex; align-items:center; gap:8px;
-    }
-    .t-dot{color:var(--teal);font-size:0.42rem}
-
-    /* ── Hero ── */
-    .lp-hero {
-        max-width: 860px; margin: 0 auto;
-        padding: clamp(56px,8vw,100px) clamp(20px,5vw,48px) clamp(48px,6vw,80px);
-        text-align: center; display: flex; flex-direction: column; align-items: center;
-    }
-    .hero-eyebrow {
-        display: inline-flex; align-items: center; gap: 8px;
-        font-family: var(--mono); font-size: 0.6rem;
-        letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal);
-        padding: 6px 16px; border-radius: 100px;
-        border: 1px solid rgba(0,229,200,0.22);
-        background: rgba(0,229,200,0.05); margin-bottom: 36px;
-    }
-    .hero-h1 {
-        font-family: var(--display); font-weight: 800;
-        font-size: clamp(2.8rem,7vw,5.4rem);
-        line-height: 1.03; letter-spacing: -0.04em;
-        color: var(--text); margin: 0 0 28px 0;
-    }
-    .hero-h1 em { font-style: normal; color: var(--teal); }
-    .hero-h1 .h1-muted {
-        display: block; font-size: clamp(1.6rem,3.8vw,2.8rem);
-        color: var(--muted); font-weight: 600; letter-spacing: -0.025em; margin-top: 10px;
-    }
-    .hero-sub {
-        font-family: var(--mono); font-size: clamp(0.78rem,1.5vw,0.92rem);
-        color: var(--text2); line-height: 2; max-width: 620px; margin: 0 0 52px 0;
-    }
-    .hero-sub strong { color: var(--text); }
-    @media(max-width:480px){
-        .lp-hero{padding-top:clamp(40px,8vw,56px);padding-bottom:20px}
-        .hero-eyebrow{margin-bottom:22px}
-        .hero-h1{font-size:2.05rem;margin-bottom:16px}
-        .hero-sub{font-size:0.74rem;line-height:1.7;margin-bottom:28px}
-    }
-
-    /* ── Stat bar ── */
-    .hero-stats {
-        display: flex; justify-content: center; flex-wrap: wrap;
-        gap: 0; border: 1px solid var(--border); border-radius: 16px;
-        overflow: hidden; width: 100%; max-width: 600px;
-        background: var(--s2);
-    }
-    .hs-block {
-        flex: 1; min-width: 120px; padding: 20px 16px;
-        text-align: center; border-right: 1px solid var(--border);
-    }
-    .hs-block:last-child{border-right:none}
-    .hs-num {
-        font-family: var(--display); font-weight: 800;
-        font-size: 1.6rem; color: var(--teal); line-height: 1;
-    }
-    .hs-label {
-        font-family: var(--mono); font-size: 0.52rem;
-        color: var(--muted); text-transform: uppercase;
-        letter-spacing: 0.14em; margin-top: 6px;
-    }
-    @media(max-width:480px){
-        .hs-block{border-right:none;border-bottom:1px solid var(--border)}
-        .hs-block:last-child{border-bottom:none}
-    }
-
-    /* ── Apps showcase ── */
-    .apps-section {
-        max-width: 1060px; margin: 0 auto;
-        padding: clamp(32px,5vw,64px) clamp(20px,5vw,48px);
-    }
-    .section-head { text-align: center; margin-bottom: 44px; }
-    .section-label {
-        font-family: var(--mono); font-size: 0.56rem;
-        letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
-        margin-bottom: 12px; display: block;
-    }
-    .section-title {
-        font-family: var(--display); font-weight: 700;
-        font-size: clamp(1.6rem,3.2vw,2.2rem); color: var(--text);
-        letter-spacing: -0.03em; margin: 0;
-    }
-    .section-title em { font-style: normal; color: var(--teal); }
-
-    .apps-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-    }
-    .app-card {
-        background: var(--s2); border: 1px solid var(--border);
-        border-radius: 20px; padding: 28px 24px;
-        position: relative; overflow: hidden;
-        transition: transform 0.25s, border-color 0.25s;
-    }
-    .app-card:hover { transform: translateY(-5px); border-color: var(--border2); }
-    .app-card::after {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-        opacity: 0; transition: opacity 0.3s;
-    }
-    .app-card:hover::after { opacity: 1; }
-    .app-card.teal::after  { background: linear-gradient(90deg,transparent,var(--teal) 50%,transparent); }
-    .app-card.purple::after{ background: linear-gradient(90deg,transparent,var(--purple) 50%,transparent); }
-    .app-card.amber::after { background: linear-gradient(90deg,transparent,var(--amber) 50%,transparent); }
-
-    .app-icon {
-        width: 48px; height: 48px; border-radius: 13px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.4rem; margin-bottom: 20px;
-    }
-    .app-icon.teal   { background: rgba(0,229,200,0.1); border: 1px solid rgba(0,229,200,0.2); }
-    .app-icon.purple { background: rgba(124,109,240,0.1); border: 1px solid rgba(124,109,240,0.2); }
-    .app-icon.amber  { background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.2); }
-
-    .app-name {
-        font-family: var(--display); font-weight: 700;
-        font-size: 1.05rem; color: var(--text);
-        letter-spacing: -0.02em; margin-bottom: 10px;
-    }
-    .app-desc {
-        font-family: var(--mono); font-size: 0.68rem;
-        color: var(--text2); line-height: 1.85; margin-bottom: 20px;
-    }
-    .app-tags {
-        display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;
-    }
-    .app-tag {
-        font-family: var(--mono); font-size: 0.54rem;
-        letter-spacing: 0.06em; text-transform: uppercase;
-        padding: 4px 10px; border-radius: 6px;
-        border: 1px solid var(--border); color: var(--muted);
-    }
-
-    @media(max-width:780px){
-        .apps-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto;gap:10px}
-        .app-card{
-            display:flex; align-items:flex-start; gap:14px;
-            padding:16px 18px; border-radius:14px;
-        }
-        .app-icon{
-            width:38px; height:38px; border-radius:10px;
-            font-size:1.05rem; margin-bottom:0; flex-shrink:0;
-        }
-        .app-name{ font-size:0.92rem; margin-bottom:3px; }
-        .app-desc{
-            font-size:0.62rem; line-height:1.5; margin-bottom:0;
-            display:-webkit-box; -webkit-line-clamp:2;
-            -webkit-box-orient:vertical; overflow:hidden;
-        }
-        .app-tags{ display:none; }
-    }
-
-    /* ── Free trial section ── */
-    .trial-section {
-        max-width: 860px; margin: 0 auto;
-        padding: clamp(20px,4vw,48px) clamp(20px,5vw,48px);
-    }
-    .trial-card {
-        background: linear-gradient(135deg, rgba(0,229,200,0.055) 0%, rgba(124,109,240,0.06) 100%);
-        border: 1px solid rgba(0,229,200,0.22); border-radius: 22px;
-        padding: clamp(30px,4vw,48px) clamp(24px,4vw,48px);
-        position: relative; overflow: hidden; text-align: center;
-    }
-    .trial-card::before {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-        background: linear-gradient(90deg,transparent,var(--teal) 40%,var(--purple) 60%,transparent);
-    }
-    .trial-title {
-        font-family: var(--display); font-weight: 800;
-        font-size: clamp(1.5rem,3.2vw,2rem);
-        color: var(--text); letter-spacing: -0.03em; margin-bottom: 12px;
-    }
-    .trial-title em { font-style: normal; color: var(--teal); }
-    .trial-desc {
-        font-family: var(--mono); font-size: 0.72rem;
-        color: var(--text2); line-height: 2; margin-bottom: 28px;
-        max-width: 540px; margin-left: auto; margin-right: auto;
-    }
-    .trial-limits {
-        display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
-        margin-bottom: 32px;
-    }
-    .tl-pill {
-        display: inline-flex; align-items: center; gap: 7px;
-        font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em;
-        padding: 7px 15px; border-radius: 8px;
-        border: 1px solid var(--border2); background: var(--s2); color: var(--text2);
-    }
-    .tl-pill.ok  { border-color: rgba(0,229,200,0.25); color: var(--teal); }
-    .tl-pill.no  { border-color: rgba(240,92,124,0.2); color: var(--pink); opacity: .85; }
-
-    /* ── Pricing ── */
-    .lp-pricing {
-        max-width: 960px; margin: 0 auto;
-        padding: clamp(32px,5vw,64px) clamp(20px,5vw,48px);
-    }
-    .pricing-grid {
-        display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
-    }
-    @media(max-width:720px){.pricing-grid{grid-template-columns:1fr;max-width:380px;margin:0 auto}}
-
-    .price-card {
-        position: relative; background: var(--s2);
-        border: 1px solid var(--border); border-radius: 20px;
-        padding: 30px 26px 24px; transition: transform 0.25s, border-color 0.25s;
-        overflow: hidden;
-    }
-    .price-card:hover{transform:translateY(-5px);border-color:var(--border2)}
-    .price-card.featured{border-color:rgba(0,229,200,0.28);background:linear-gradient(155deg,rgba(0,229,200,0.035) 0%,rgba(124,109,240,0.04) 100%)}
-    .price-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.3s;background:linear-gradient(90deg,transparent,var(--teal) 50%,transparent)}
-    .price-card.featured::after,.price-card:hover::after{opacity:1}
-
-    .price-badge {
-        position: absolute; top: 14px; right: 14px;
-        font-family: var(--mono); font-size: 0.48rem;
-        letter-spacing: 0.12em; text-transform: uppercase;
-        padding: 4px 10px; border-radius: 100px;
-    }
-    .badge-pop{background:rgba(0,229,200,0.1);color:var(--teal);border:1px solid rgba(0,229,200,0.28)}
-    .badge-val{background:rgba(124,109,240,0.1);color:var(--purple);border:1px solid rgba(124,109,240,0.28)}
-
-    .price-plan{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-    .price-amount{font-family:var(--display);font-weight:800;font-size:2.8rem;color:var(--text);line-height:1;letter-spacing:-0.03em}
-    .price-curr{font-size:1.1rem;color:var(--muted);vertical-align:top;margin-top:9px;display:inline-block}
-    .price-credits{font-family:var(--mono);font-size:0.68rem;color:var(--teal);margin:8px 0 20px}
-    .price-note{font-family:var(--mono);font-size:0.58rem;color:var(--muted);margin-bottom:8px}
-    .price-divider{height:1px;background:var(--border);margin-bottom:18px}
-    .price-features{list-style:none;padding:0;margin:0 0 24px}
-    .price-features li{font-family:var(--mono);font-size:0.62rem;color:var(--text2);padding:7px 0;display:flex;align-items:flex-start;gap:9px;border-bottom:1px solid rgba(255,255,255,0.03)}
-    .price-features li:last-child{border-bottom:none}
-    .pf-check{color:var(--teal);flex-shrink:0;margin-top:1px}
-    .pf-x{color:var(--pink);flex-shrink:0;margin-top:1px}
-
-    /* ── Pricing CTA link buttons ── */
-    div[data-testid="column"]:nth-child(1) .stLinkButton a,
-    div[data-testid="column"]:nth-child(3) .stLinkButton a {
-        background: transparent !important; border: 1px solid var(--border2) !important;
-        color: var(--text) !important; font-family: var(--display) !important;
-        font-weight: 700 !important; font-size: 0.72rem !important;
-        border-radius: 11px !important; padding: 12px 0 !important;
-        width: 100% !important; display: block !important;
-        text-align: center !important; letter-spacing: 0.04em !important;
-        transition: border-color 0.2s, color 0.2s !important;
-    }
-    div[data-testid="column"]:nth-child(1) .stLinkButton a:hover,
-    div[data-testid="column"]:nth-child(3) .stLinkButton a:hover {
-        border-color: rgba(0,229,200,0.4) !important; color: var(--teal) !important;
-    }
-    div[data-testid="column"]:nth-child(2) .stLinkButton a {
-        background: linear-gradient(135deg,#00e5c8,#00bfab) !important;
-        border: none !important; color: #04090f !important;
-        font-family: var(--display) !important; font-weight: 800 !important;
-        font-size: 0.72rem !important; border-radius: 11px !important;
-        padding: 12px 0 !important; width: 100% !important;
-        display: block !important; text-align: center !important;
-        letter-spacing: 0.04em !important;
-        box-shadow: 0 4px 22px rgba(0,229,200,0.32) !important;
-        transition: box-shadow 0.2s, transform 0.2s !important;
-    }
-    div[data-testid="column"]:nth-child(2) .stLinkButton a:hover {
-        box-shadow: 0 7px 30px rgba(0,229,200,0.52) !important;
-        transform: translateY(-2px) !important;
-    }
-    .stLinkButton{margin:0!important}
-
-    /* ── Auth gate ── */
-    .lp-gate {
-        max-width: 560px; margin: 0 auto;
-        padding: clamp(16px,3vw,36px) clamp(20px,5vw,48px) clamp(48px,7vw,80px);
-    }
-    .gate-card {
-        background: var(--s2); border: 1px solid var(--border2);
-        border-radius: 22px; padding: clamp(28px,5vw,46px) clamp(24px,5vw,46px);
-        position: relative; overflow: hidden; text-align: center;
-    }
-    .gate-card::before {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg,transparent,var(--teal) 35%,var(--purple) 65%,transparent);
-        opacity: .75;
-    }
-    .gate-lock {
-        width: 54px; height: 54px; border-radius: 15px;
-        background: linear-gradient(135deg,rgba(0,229,200,0.1),rgba(124,109,240,0.1));
-        border: 1px solid rgba(0,229,200,0.2);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem; margin: 0 auto 22px;
-    }
-    .gate-title {
-        font-family: var(--display); font-weight: 800; font-size: 1.55rem;
-        color: var(--text); letter-spacing: -0.028em; margin-bottom: 12px;
-    }
-    .gate-desc {
-        font-family: var(--mono); font-size: 0.7rem;
-        color: var(--text2); line-height: 1.9; margin-bottom: 28px;
-    }
-    .gate-desc strong { color: var(--text); }
-    .key-format {
-        display: inline-flex; align-items: center; gap: 8px;
-        font-family: var(--mono); font-size: 0.6rem; color: var(--muted);
-        background: rgba(255,255,255,0.025); border: 1px solid var(--border);
-        border-radius: 8px; padding: 7px 16px; margin-bottom: 28px;
-    }
-    .kf-icon{color:var(--teal)}
-    .gate-input-label {
-        font-family: var(--mono); font-size: 0.56rem;
-        text-transform: uppercase; letter-spacing: 0.16em;
-        color: var(--muted); margin-bottom: 8px; display: block; text-align: left;
-    }
-    .gate-links {
-        margin-top: 22px; text-align: center;
-        font-family: var(--mono); font-size: 0.6rem;
-        color: var(--muted); line-height: 2.4;
-        display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 2px;
-    }
-    .gate-links a{color:var(--teal);text-decoration:none}
-    .gate-links a:hover{text-decoration:underline;text-underline-offset:2px}
-    .gate-sep{color:var(--border2);margin:0 7px}
-    .err-msg {
-        margin-top: 12px; padding: 11px 16px;
-        background: rgba(240,92,124,0.06); border: 1px solid rgba(240,92,124,0.22);
-        border-radius: 10px; font-family: var(--mono); font-size: 0.66rem;
-        color: var(--pink); display: flex; align-items: center; gap: 10px; text-align: left;
-    }
-
-    /* ── Input overrides (gate) ── */
-    [data-testid="stTextInput"] > label { display:none !important }
-    [data-testid="stTextInput"] > div > div > input {
-        background: rgba(255,255,255,0.03) !important;
-        border: 1px solid rgba(255,255,255,0.09) !important;
-        border-radius: 12px !important; color: var(--text) !important;
-        font-family: var(--mono) !important; font-size: 0.84rem !important;
-        padding: 14px 18px !important; letter-spacing: 0.1em !important;
-        transition: border-color 0.2s, box-shadow 0.2s !important;
-    }
-    [data-testid="stTextInput"] > div > div > input:focus {
-        border-color: rgba(0,229,200,0.45) !important;
-        box-shadow: 0 0 0 3px rgba(0,229,200,0.07) !important;
-    }
-    [data-testid="stTextInput"] > div > div > input::placeholder{color:#2c3450!important}
-    [data-testid="baseButton-primary"] {
-        background: linear-gradient(135deg,#00e5c8 0%,#00bfab 100%) !important;
-        border: none !important; color: #04090f !important;
-        font-family: var(--display) !important; font-weight: 800 !important;
-        font-size: 0.86rem !important; letter-spacing: 0.04em !important;
-        border-radius: 12px !important; padding: 14px !important;
-        box-shadow: 0 4px 22px rgba(0,229,200,0.28) !important;
-        transition: box-shadow 0.2s, transform 0.2s !important;
-    }
-    [data-testid="baseButton-primary"]:hover {
-        box-shadow: 0 8px 32px rgba(0,229,200,0.48) !important;
-        transform: translateY(-2px) !important;
-    }
-    /* Trial button */
-    .trial-btn-zone .stButton > button {
-        background: linear-gradient(135deg,#00e5c8,#00bfab) !important;
-        border: none !important; color: #050b10 !important;
-        font-family: var(--display) !important; font-weight: 800 !important;
-        font-size: 0.84rem !important; border-radius: 13px !important;
-        padding: 14px 40px !important; letter-spacing: 0.04em !important;
-        box-shadow: 0 4px 24px rgba(0,229,200,0.3) !important;
-        min-width: 260px;
-    }
-    .trial-btn-zone .stButton > button:hover {
-        box-shadow: 0 8px 32px rgba(0,229,200,0.52) !important;
-        transform: translateY(-2px) !important;
-    }
-    .trial-note{font-family:var(--mono);font-size:0.56rem;color:var(--muted);margin-top:12px;text-align:center}
-
-    /* ── Footer ── */
-    .lp-footer {
-        border-top: 1px solid var(--border);
-        padding: 22px clamp(20px,5vw,64px);
-        display: flex; flex-wrap: wrap;
-        justify-content: space-between; align-items: center; gap: 12px;
-        background: rgba(5,7,15,0.94);
-    }
-    .footer-brand{font-family:var(--display);font-size:0.92rem;font-weight:800;color:var(--muted);letter-spacing:-0.02em}
-    .footer-brand .ft{color:var(--teal)}
-    .footer-links{display:flex;gap:24px;align-items:center}
-    .footer-links a{font-family:var(--mono);font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-    .footer-links a:hover{color:var(--teal)}
-    .footer-copy{font-family:var(--mono);font-size:0.52rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;opacity:.45}
-    @media(max-width:480px){.lp-footer{flex-direction:column;text-align:center}}
-
-    /* ── App selector (post-auth) ── */
-    .selector-wrap {
-        max-width: 1020px; margin: 0 auto;
-        padding: clamp(40px,6vw,80px) clamp(20px,5vw,48px);
-    }
-    .selector-header {
-        margin-bottom: 48px; text-align: center;
-    }
-    .selector-greeting {
-        font-family: var(--mono); font-size: 0.62rem;
-        letter-spacing: 0.16em; text-transform: uppercase;
-        color: var(--teal); margin-bottom: 14px; display: block;
-    }
-    .selector-title {
-        font-family: var(--display); font-weight: 800;
-        font-size: clamp(1.8rem,4vw,2.6rem); color: var(--text);
-        letter-spacing: -0.03em; margin: 0 0 10px;
-    }
-    .selector-sub {
-        font-family: var(--mono); font-size: 0.72rem;
-        color: var(--text2); line-height: 1.8;
-    }
-    .selector-grid {
-        display: grid; grid-template-columns: repeat(3,1fr); gap: 20px;
-    }
-    @media(max-width:780px){.selector-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
-
-    .sel-card {
-        background: var(--s2); border: 1px solid var(--border);
-        border-radius: 20px; padding: 30px 26px;
-        position: relative; overflow: hidden;
-        transition: transform 0.25s, border-color 0.25s;
-        cursor: pointer;
-    }
-    .sel-card:hover{transform:translateY(-6px)}
-    .sel-card.teal:hover{border-color:rgba(0,229,200,0.35)}
-    .sel-card.purple:hover{border-color:rgba(124,109,240,0.35)}
-    .sel-card.amber:hover{border-color:rgba(245,166,35,0.35)}
-    .sel-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.3s}
-    .sel-card:hover::after{opacity:1}
-    .sel-card.teal::after{background:linear-gradient(90deg,transparent,var(--teal) 50%,transparent)}
-    .sel-card.purple::after{background:linear-gradient(90deg,transparent,var(--purple) 50%,transparent)}
-    .sel-card.amber::after{background:linear-gradient(90deg,transparent,var(--amber) 50%,transparent)}
-
-    .sel-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:22px}
-    .sel-icon.teal{background:rgba(0,229,200,0.1);border:1px solid rgba(0,229,200,0.22)}
-    .sel-icon.purple{background:rgba(124,109,240,0.1);border:1px solid rgba(124,109,240,0.22)}
-    .sel-icon.amber{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.22)}
-    .sel-name{font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--text);letter-spacing:-0.025em;margin-bottom:10px}
-    .sel-desc{font-family:var(--mono);font-size:0.68rem;color:var(--text2);line-height:1.9;margin-bottom:20px}
-    .sel-features{list-style:none;padding:0;margin:0 0 24px}
-    .sel-features li{font-family:var(--mono);font-size:0.6rem;color:var(--muted);padding:5px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.03)}
-    .sel-features li:last-child{border-bottom:none}
-    .sel-check-teal{color:var(--teal)}
-    .sel-check-purple{color:var(--purple)}
-    .sel-check-amber{color:var(--amber)}
-
-    /* ── App selector: horizontal swipe carousel on mobile ──
-       Streamlit's own st.columns() row (stHorizontalBlock) switches to
-       flex-direction:column below ~640px, which is what stacked the 4
-       cards vertically. :has() lets us target *only* the row that holds
-       .sel-card without touching st.columns() anywhere else in the app,
-       force it to stay a horizontal flex row, and turn it into a native
-       scroll-snap carousel - each card peeks the edge of the next one
-       so it reads as swipeable, and st.button still works normally
-       since we never leave Streamlit's own column/button structure. */
-    [data-testid="stHorizontalBlock"]:has(.sel-card) {
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        scroll-snap-type: x mandatory !important;
-        -webkit-overflow-scrolling: touch !important;
-        scrollbar-width: none !important;
-        padding: 4px 6vw 14px 6vw !important;
-        margin: 0 -6vw !important;
-    }
-    [data-testid="stHorizontalBlock"]:has(.sel-card)::-webkit-scrollbar { display: none !important; }
-    [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
-        flex: 0 0 84vw !important;
-        min-width: 84vw !important;
-        max-width: 84vw !important;
-        scroll-snap-align: center !important;
-    }
-    .swipe-hint {
-        display: block; text-align: center;
-        font-family: var(--mono); font-size: 0.62rem;
-        color: var(--muted); letter-spacing: 0.08em;
-        text-transform: uppercase; margin: -10px 0 16px;
-    }
-    @media (min-width: 780px) {
-        [data-testid="stHorizontalBlock"]:has(.sel-card) {
-            overflow-x: visible !important;
-            padding: 0 !important; margin: 0 !important;
-        }
-        [data-testid="stHorizontalBlock"]:has(.sel-card) [data-testid="column"] {
-            flex: 1 1 0 !important; min-width: 0 !important; max-width: none !important;
-        }
-        .swipe-hint { display: none !important; }
-    }
-
-    /* Selector CTA buttons */
-    .sel-btn-teal .stButton > button{background:linear-gradient(135deg,rgba(0,229,200,0.12),rgba(0,229,200,0.06))!important;border:1px solid rgba(0,229,200,0.3)!important;color:var(--teal)!important;font-family:var(--display)!important;font-weight:700!important;border-radius:10px!important;transition:all .2s!important}
-    .sel-btn-teal .stButton > button:hover{background:var(--teal)!important;color:#04090f!important;box-shadow:0 4px 20px rgba(0,229,200,0.3)!important}
-    .sel-btn-purple .stButton > button{background:linear-gradient(135deg,rgba(124,109,240,0.12),rgba(124,109,240,0.06))!important;border:1px solid rgba(124,109,240,0.3)!important;color:var(--purple)!important;font-family:var(--display)!important;font-weight:700!important;border-radius:10px!important;transition:all .2s!important}
-    .sel-btn-purple .stButton > button:hover{background:var(--purple)!important;color:#fff!important;box-shadow:0 4px 20px rgba(124,109,240,0.3)!important}
-    .sel-btn-amber .stButton > button{background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(245,166,35,0.06))!important;border:1px solid rgba(245,166,35,0.3)!important;color:var(--amber)!important;font-family:var(--display)!important;font-weight:700!important;border-radius:10px!important;transition:all .2s!important}
-    .sel-btn-amber .stButton > button:hover{background:var(--amber)!important;color:#04090f!important;box-shadow:0 4px 20px rgba(245,166,35,0.3)!important}
-
-    /* Credit HUD (selector page) */
-    .credit-hud {
-        display: flex; align-items: center; justify-content: center;
-        gap: 16px; margin-bottom: 48px; flex-wrap: wrap;
-    }
-    .credit-hud-pill {
-        display: inline-flex; align-items: center; gap: 10px;
-        background: var(--s2); border: 1px solid var(--border);
-        border-radius: 100px; padding: 10px 20px;
-        font-family: var(--mono); font-size: 0.68rem; color: var(--text2);
-    }
-    .credit-hud-pill .credit-num {
-        font-family: var(--display); font-weight: 800; font-size: 1.2rem;
-        color: var(--teal); line-height: 1;
-    }
-    .credit-hud-pill.warn .credit-num{color:var(--amber)}
-    .credit-hud-pill.danger .credit-num{color:var(--pink)}
-
-    /* Sign out button */
-    .signout-zone .stButton > button{background:transparent!important;border:1px solid var(--border)!important;color:var(--muted)!important;font-family:var(--mono)!important;font-size:0.68rem!important;border-radius:8px!important;padding:7px 18px!important;transition:all .2s!important}
-    .signout-zone .stButton > button:hover{border-color:var(--pink)!important;color:var(--pink)!important}
-    </style>
-    """, unsafe_allow_html=True)
+def apply_theme(fig):
+    """Apply the suite Plotly theme to a figure. Returns the figure."""
+    fig.update_layout(**PLOTLY_THEME)
+    return fig
 
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # ROUTE: APP SELECTOR (authenticated)
-    # ═══════════════════════════════════════════════════════════════════════════════
+# ── Suite CSS ──────────────────────────────────────────────────────────────────
+SUITE_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
 
-    if st.session_state.get("access_granted"):
+/* ── Design tokens ── */
+:root {
+    --bg:       #0a0c10;
+    --surface:  #111318;
+    --surface2: #181c24;
+    --border:   #1f2535;
+    --accent:   #00e5c8;
+    --accent2:  #7c6df0;
+    --accent3:  #f05c7c;
+    --text:     #e2e8f4;
+    --muted:    #6b7a9a;
+    --success:  #22d3a0;
+    --warn:     #f5a623;
+    --mono:     'DM Mono', monospace;
+    --display:  'Syne', sans-serif;
+    --hero-font:'Bricolage Grotesque', sans-serif;
+}
 
-        # A login/trial-activation just happened. Clear any leftover URL
-        # hash (e.g. #key-gate from the landing page) and scroll to top —
-        # otherwise the browser keeps trying to anchor to an element that
-        # no longer exists on this view, leaving blank space above the nav.
-        if st.session_state.pop("_scroll_reset_pending", False):
-            components.html(
-                """
-                <script>
-                    window.parent.scrollTo(0, 0);
-                    if (window.parent.location.hash) {
-                        window.parent.history.replaceState(
-                            null, '',
-                            window.parent.location.pathname + window.parent.location.search
-                        );
-                    }
-                </script>
-                """,
-                height=0,
-            )
+/* ── Global ── */
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+    font-family: var(--mono) !important;
+}
 
-        # Background layers
-        st.markdown('<div class="lp-bg"></div><div class="lp-grid"></div>', unsafe_allow_html=True)
+/* ── Header / toolbar / decoration bar ──
+   Without this, Streamlit's native chrome (the top bar holding the
+   hamburger menu and "Manage app" link, plus the thin accent line above
+   it) keeps its own default theme background regardless of what the
+   rest of the CSS does to the content area - that mismatch is exactly
+   the grey-bar-over-dark-canvas seam. Force all of it to the same --bg. */
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+}
+[data-testid="stHeader"] * { color: var(--text) !important; }
 
-        credits_left   = st.session_state.get("user_credits", 0)
-        trial_active   = is_trial()
-        email_display  = st.session_state.get("user_email", "—")
-        credit_display = "∞" if trial_active else str(credits_left)
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
+}
+[data-testid="stSidebarNav"] { display: none !important; }
 
-        if trial_active:
-            hud_class = ""
-            credit_label = "Free Trial"
-        elif credits_left > 5:
-            hud_class = ""
-            credit_label = "credits remaining"
-        elif credits_left > 0:
-            hud_class = "warn"
-            credit_label = "credits remaining"
-        else:
-            hud_class = "danger"
-            credit_label = "no credits"
+/* ── Headers ── */
+h1, h2, h3, h4 {
+    font-family: var(--display) !important;
+    color: var(--text) !important;
+}
 
-        # Nav
-        st.markdown(f"""
-        <nav class="lp-nav fi d1">
-            <div class="nav-brand">
-                <div class="nav-logo">⬡</div>
-                <div>
-                    x<span class="brand-accent">360</span> Suite
-                    <div class="brand-sub">Unified Analytics Platform</div>
-                </div>
-            </div>
-            <div class="nav-right">
-                <span class="nav-tag">{email_display}</span>
-                <span class="nav-tag nav-tag-live"><span class="dot-live"></span>Session Active</span>
-            </div>
-        </nav>
-        """, unsafe_allow_html=True)
+/* ── Metric cards ── */
+[data-testid="metric-container"] {
+    background: var(--surface2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    padding: 18px !important;
+}
+[data-testid="metric-container"] > div > div:first-child,
+[data-testid="metric-container"] label {
+    color: var(--muted) !important;
+    font-family: var(--mono) !important;
+    font-size: 0.68rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+}
+[data-testid="stMetricValue"] {
+    color: var(--accent) !important;
+    font-family: var(--display) !important;
+    font-weight: 700 !important;
+}
 
-        st.markdown("""
-        <div class="selector-wrap lp-wrap">
-          <div class="selector-header fi d2">
-            <span class="selector-greeting">⬡ x360-Suite — App Selector</span>
-            <div class="selector-title">Which tool are you<br/>working with today?</div>
-            <p class="selector-sub">
-                Your single access key works across the entire suite.<br/>
-                Credits are shared — usage is reflected in real time.
-            </p>
-          </div>
-        </div>
-        """, unsafe_allow_html=True)
+/* ── Buttons ── */
+.stButton > button {
+    background: transparent !important;
+    border: 1px solid var(--accent) !important;
+    color: var(--accent) !important;
+    font-family: var(--mono) !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+    padding: 8px 20px !important;
+    transition: all 0.2s !important;
+    letter-spacing: 0.05em !important;
+}
+.stButton > button:hover {
+    background: var(--accent) !important;
+    color: var(--bg) !important;
+}
+[data-testid="baseButton-primary"] {
+    background: linear-gradient(135deg, var(--accent) 0%, #00bfab 100%) !important;
+    border: none !important;
+    color: #04090f !important;
+    font-family: var(--display) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 20px rgba(0,229,200,0.25) !important;
+}
+[data-testid="baseButton-primary"]:hover {
+    box-shadow: 0 7px 28px rgba(0,229,200,0.45) !important;
+    transform: translateY(-1px) !important;
+}
 
-        # Credit HUD
-        st.markdown(f"""
-        <div class="credit-hud fi d3">
-            <div class="credit-hud-pill {hud_class}">
-                <span class="credit-num">{credit_display}</span>
-                <span>{credit_label}</span>
-            </div>
-            {'<div class="credit-hud-pill" style="border-color:rgba(240,92,124,0.2);color:var(--pink);font-size:0.6rem;">Trial: AI &amp; exports locked</div>' if trial_active else ''}
-        </div>
-        """, unsafe_allow_html=True)
+/* ── Inputs & selects ── */
+.stSelectbox > div > div,
+.stMultiSelect > div > div,
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stTextArea > div > div > textarea {
+    background: var(--surface2) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    font-family: var(--mono) !important;
+    border-radius: 6px !important;
+}
+.stSelectbox > div > div:focus-within,
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {
+    border-color: rgba(0,229,200,0.45) !important;
+    box-shadow: 0 0 0 3px rgba(0,229,200,0.07) !important;
+}
 
-        # App cards + launch buttons
-        APPS = [
-            {
-                "name":     "PanelStatX",
-                "icon":     "📐",
-                "color":    "teal",
-                "check":    "sel-check-teal",
-                "btn":      "sel-btn-teal",
-                "desc":     "Production-grade panel econometrics with Fixed Effects, Random Effects, and First-Difference estimators.",
-                "features": ["OLS · FE · RE · First-Difference models", "Breusch-Pagan & Hausman tests", "Entity cross-section plots", "AI explainer (paid)", "DOCX report export (paid)"],
-                "page_obj": st.session_state["_panelstatx_page"],
-            },
-            {
-                "name":     "DataSynthX",
-                "icon":     "🧬",
-                "color":    "purple",
-                "check":    "sel-check-purple",
-                "btn":      "sel-btn-purple",
-                "desc":     "Statistical synthetic data generation with full trust-metric validation and conformity scoring.",
-                "features": ["Auto data profiling", "Synthetic generation engine", "Correlation & distribution fidelity", "AI trust analysis (paid)", "CSV / Excel export (paid)"],
-                "page_obj": st.session_state["_datasynthx_page"],
-            },
-            {
-                "name":     "EFActor",
-                "icon":     "🔬",
-                "color":    "amber",
-                "check":    "sel-check-amber",
-                "btn":      "sel-btn-amber",
-                "desc":     "Psychometric analysis platform for Exploratory and Confirmatory Factor Analysis with auto-fix.",
-                "features": ["KMO suitability & scree plot", "EFA with rotation (varimax etc.)", "CFA & fit indices", "Auto-fix problematic variables", "DOCX report export (paid)"],
-                "page_obj": st.session_state["_efactor_page"],
-            },
-            
-            {
-                "name":     "DataCleanX",
-                "icon":     "🧹",
-                "color":    "teal",
-                "check":    "sel-check-teal",
-                "btn":      "sel-btn-teal",
-                "desc":     "Automated data cleaning with smart profiling, missing-value imputation, outlier management, and a full audit log.",
-                "features": ["Data Health Score (0–100)", "Auto-Clean mode", "Outlier visualisation & capping", "Column standardisation", "CSV / Excel + Audit Log export (paid)"],
-                "page_obj": st.session_state["_datacleanx_page"],
-            },
-          
-        ]
+/* ── Tabs ── */
+.stTabs [data-baseweb="tab-list"] {
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    gap: 0 !important;
+    border-radius: 0 !important;
+}
+.stTabs [data-baseweb="tab"] {
+    color: var(--muted) !important;
+    font-family: var(--mono) !important;
+    font-size: 0.78rem !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 12px 24px !important;
+    letter-spacing: 0.04em !important;
+    transition: color 0.2s !important;
+}
+.stTabs [aria-selected="true"] {
+    color: var(--accent) !important;
+    border-bottom: 2px solid var(--accent) !important;
+    background: transparent !important;
+}
+.stTabs [data-baseweb="tab"]:hover { color: var(--text) !important; }
 
-        st.markdown('<span class="swipe-hint">← Swipe to see all 4 tools →</span>', unsafe_allow_html=True)
+/* ── Dataframes ── */
+.stDataFrame {
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
 
-        cols = st.columns(4, gap="medium")
+/* ── Expanders ── */
+.streamlit-expanderHeader {
+    background: var(--surface2) !important;
+    color: var(--text) !important;
+    font-family: var(--mono) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 6px !important;
+    font-size: 0.8rem !important;
+}
+.streamlit-expanderContent {
+    border: 1px solid var(--border) !important;
+    border-top: none !important;
+    background: var(--surface2) !important;
+}
 
-        for col, app in zip(cols, APPS):
-            with col:
-                features_html = "".join(
-                    f'<li><span class="{app["check"]}">✓</span>{f}</li>'
-                    for f in app["features"]
-                )
-                st.markdown(f"""
-                <div class="sel-card {app['color']} fi d4">
-                    <div class="sel-icon {app['color']}">{app['icon']}</div>
-                    <div class="sel-name">{app['name']}</div>
-                    <div class="sel-desc">{app['desc']}</div>
-                    <ul class="sel-features">{features_html}</ul>
-                </div>
-                """, unsafe_allow_html=True)
+/* ── Sidebar labels ── */
+.stSidebar label, .stSidebar .stMarkdown,
+[data-testid="stSidebar"] label {
+    color: var(--muted) !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.04em !important;
+}
 
-                st.markdown(f'<div class="{app["btn"]}">', unsafe_allow_html=True)
-                if st.button(
-                    f"Launch {app['name']} →",
-                    key=f"launch_{app['name']}",
-                    type="primary",
-                    use_container_width=True,
-                ):
-                    # Use StreamlitPage object — required for V2 callable-based routing.
-                    # String paths don't resolve when the home page is a callable.
-                    st.switch_page(app["page_obj"])
-                st.markdown("</div>", unsafe_allow_html=True)
+/* ── Slider ── */
+.stSlider [data-baseweb="slider"] div[role="slider"] {
+    background: var(--accent) !important;
+}
 
-        st.markdown("<br><br>", unsafe_allow_html=True)
+/* ── Radio ── */
+.stRadio > div { gap: 8px !important; }
+.stRadio label {
+    font-family: var(--mono) !important;
+    font-size: 0.78rem !important;
+    color: var(--text) !important;
+}
 
-        # Sign out
-        _, so_col, _ = st.columns([3, 1, 3])
-        with so_col:
-            st.markdown('<div class="signout-zone">', unsafe_allow_html=True)
-            if st.button("Sign Out", type="primary", use_container_width=True):
-                sign_out()
-            st.markdown("</div>", unsafe_allow_html=True)
+/* ── Alerts ── */
+[data-testid="stInfo"]    { background: rgba(0,229,200,0.06) !important; border-left-color: var(--accent) !important; }
+[data-testid="stWarning"] { background: rgba(245,166,35,0.06) !important; border-left-color: var(--warn) !important; }
+[data-testid="stSuccess"] { background: rgba(34,211,160,0.06) !important; border-left-color: var(--success) !important; }
+[data-testid="stError"]   { background: rgba(240,92,124,0.06) !important; border-left-color: var(--accent3) !important; }
 
-        # Footer
-        st.markdown("""
-        <div class="lp-footer fi d8">
-            <div class="footer-brand">Sta<span class="ft">X360</span></div>
-            <div class="footer-links">
-                <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">User Guide</a>
-                <a href="mailto:bayantx360@gmail.com">Support</a>
-            </div>
-            <div class="footer-copy">Unified Analytics Platform · Credit-based access · No subscriptions</div>
-        </div>
-        """, unsafe_allow_html=True)
+/* ── Dividers ── */
+hr { border-color: var(--border) !important; }
 
-        st.stop()
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ══════════════════════════════════════════════
+   SHARED COMPONENT CLASSES
+   (used via st.markdown in all apps)
+══════════════════════════════════════════════ */
+
+/* Badge */
+.badge {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 20px; font-size: 0.65rem;
+    font-family: var(--mono); letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.badge-teal   { background: rgba(0,229,200,0.1);  color: var(--accent);  border: 1px solid rgba(0,229,200,0.25); }
+.badge-purple { background: rgba(124,109,240,0.1); color: var(--accent2); border: 1px solid rgba(124,109,240,0.25); }
+.badge-red    { background: rgba(240,92,124,0.1);  color: var(--accent3); border: 1px solid rgba(240,92,124,0.25); }
+.badge-warn   { background: rgba(245,166,35,0.1);  color: var(--warn);    border: 1px solid rgba(245,166,35,0.25); }
+.badge-green  { background: rgba(34,211,160,0.1);  color: var(--success); border: 1px solid rgba(34,211,160,0.25); }
+
+/* AI output box */
+.ai-box {
+    background: linear-gradient(135deg, rgba(0,229,200,0.04) 0%, rgba(124,109,240,0.06) 100%);
+    border: 1px solid rgba(0,229,200,0.2);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 20px 24px;
+    font-family: var(--mono); font-size: 0.84rem;
+    line-height: 1.85; color: var(--text); white-space: pre-wrap;
+}
+.ai-label {
+    font-family: var(--display); font-size: 0.62rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+}
+
+/* Locked feature banner */
+.locked-banner {
+    background: rgba(240,92,124,0.06);
+    border: 1px solid rgba(240,92,124,0.2);
+    border-left: 3px solid var(--accent3);
+    border-radius: 10px; padding: 16px 20px;
+    font-family: var(--mono); font-size: 0.78rem;
+    color: var(--accent3); line-height: 1.7;
+}
+.locked-banner strong { color: var(--text); }
+
+/* Section card */
+.scard {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px;
+    margin-bottom: 16px;
+}
+.scard-title {
+    font-family: var(--display); font-size: 0.78rem;
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted);
+    margin-bottom: 14px;
+}
+
+/* Stat pill */
+.stat-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 13px;
+    font-size: 0.68rem; color: var(--muted);
+    margin-right: 8px; margin-top: 10px;
+    font-family: var(--mono);
+}
+.stat-pill b { color: var(--accent); }
+
+/* App hero header */
+.app-hero {
+    padding: 24px 0 18px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 26px;
+}
+.app-hero-title {
+    font-family: var(--display); font-size: 2rem;
+    font-weight: 800; letter-spacing: -0.025em;
+    color: var(--text); margin: 0; line-height: 1;
+}
+.app-hero-title span { color: var(--accent); }
+.app-hero-sub {
+    font-family: var(--mono); font-size: 0.72rem;
+    color: var(--muted); margin-top: 6px; letter-spacing: 0.05em;
+}
+
+/* Suite nav breadcrumb (shown inside each app) */
+.suite-nav {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 0.62rem;
+    color: var(--muted); padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+.suite-nav a { color: var(--accent); text-decoration: none; }
+.suite-nav a:hover { text-decoration: underline; }
+.suite-nav-sep { color: var(--border); }
+
+/* Spinner blink */
+.spinner-dot::after { content: '●'; animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+</style>
+"""
 
 
-    # ═══════════════════════════════════════════════════════════════════════════════
-    # ROUTE: LANDING PAGE (unauthenticated)
-    # ═══════════════════════════════════════════════════════════════════════════════
+def apply_suite_css():
+    """
+    Inject the unified suite CSS into the Streamlit page.
+    Call once per app, immediately after st.set_page_config().
+    """
+    st.markdown(SUITE_CSS, unsafe_allow_html=True)
 
-    # Background
-    st.markdown('<div class="lp-bg"></div><div class="lp-grid"></div>', unsafe_allow_html=True)
 
-    # Navbar
-    st.markdown("""
-    <nav class="lp-nav fi d1">
-        <div class="nav-brand">
-            <div class="nav-logo">⬡</div>
-            <div>
-                <span class="brand-accent">Sta</span>X360
-                <div class="brand-sub">Unified Analytics Platform</div>
-            </div>
-        </div>
-        <div class="nav-right">
-            <span class="nav-tag">4+ Specialised Tools</span>
-            <span class="nav-tag nav-tag-live"><span class="dot-live"></span>v2.0 Live</span>
-        </div>
-    </nav>
-    """, unsafe_allow_html=True)
+# ── Shared UI components ───────────────────────────────────────────────────────
 
-    # Ticker
-    TICKER_ITEMS = [
-        "Panel Data Econometrics", "Synthetic Data Generation", "Factor Analysis (EFA/CFA)",
-        "Unified Access Key", "AI Explainer", "DOCX Report Export",
-        "Breusch-Pagan Diagnostics", "Hausman Specification Test", "Trust Metric Validation",
-        "Credit-Based Pay-As-You-Go", "No Monthly Subscription", "Instant Free Trial",
-        "Auto-Fix Data Issues", "Varimax & Oblimin Rotation", "Correlation Preservation Score",
-    ]
-    ticker_html = "".join(
-        f'<span class="t-item"><span class="t-dot">◆</span>{item}</span>'
-        for item in TICKER_ITEMS
-    )
+def render_app_hero(title_prefix: str, title_accent: str, subtitle: str):
+    """Render the standard app hero header."""
     st.markdown(f"""
-    <div class="lp-ticker fi d1">
-        <div class="ticker-track">{ticker_html}{ticker_html}</div>
+    <div class="app-hero">
+        <div class="app-hero-title">{title_prefix}<span>{title_accent}</span></div>
+        <div class="app-hero-sub">{subtitle}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Hero
-    st.markdown("""
-    <div class="lp-hero fi d2">
 
-      <div class="hero-eyebrow">
-        <span class="dot-live"></span>
-        Stata costs $800/year. StaX360 doesn't.
-      </div>
-
-      <h1 class="hero-h1">
-        Run Advanced Statistical Analysis —
-        <em>No Code, No License Fees</em>
-      </h1>
-      <p class="hero-sub">
-        Four specialised tools — <strong>PanelStatX, DataSynthX, DataCleanX, EFActor</strong>.
-        Full analysis is always free. Pay only for an <strong>AI interpretation</strong>
-        or a <strong>publication-ready export</strong>.
-      </p>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Primary CTA — placed directly under the hero so it's reachable
-    # without scrolling past the trust strip or a second marketing block.
-    _, trial_col, _ = st.columns([1.6, 1, 1.6])
-    with trial_col:
-        st.markdown('<div class="trial-btn-zone">', unsafe_allow_html=True)
-        free_trial_btn = st.button(
-            "⬡  Use Free Version",
-            type="primary",
-            key="free_trial_btn",
-            use_container_width=True,
+def render_locked_banner(feature_name: str, is_trial_user: bool):
+    """
+    Render a locked-feature banner.
+    `is_trial_user` — True = trial message, False = no-credits message.
+    """
+    if is_trial_user:
+        msg = (
+            f"<strong>{feature_name}</strong> is not available on the Free Trial. "
+            "Upgrade to a paid plan to unlock this feature across the entire Bayantx360 Suite."
         )
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown(
-            '<div class="trial-note">No sign-up · No credit card · All 4 tools included</div>',
-            unsafe_allow_html=True,
+    else:
+        msg = (
+            f"<strong>{feature_name}</strong> requires credits. "
+            "Your balance is exhausted — purchase more to continue."
         )
-    st.markdown(
-        '<div style="text-align:center;margin-top:14px;">'
-        '<a href="#key-gate" style="font-family:var(--mono);font-size:0.68rem;color:var(--teal);'
-        'text-decoration:none;letter-spacing:0.06em;border-bottom:1px solid rgba(0,229,200,0.3);padding-bottom:2px;">'
-        'Already have a key? →</a></div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(f'<div class="locked-banner">🔒 {msg}</div>', unsafe_allow_html=True)
 
 
-    # Trust banner — real user avatars + usage count
-    # To swap images: replace files in assets/avatars/ (user1.jpg–user4.jpg)
-    def _avatar_b64(filename: str) -> str:
-        import base64, os
-        path = os.path.join(os.path.dirname(__file__), "assets", "avatars", filename)
-        with open(path, "rb") as _f:
-            return base64.b64encode(_f.read()).decode()
-
-    _av = [_avatar_b64(f"user{i}.jpeg") for i in range(1, 7)]
-
-    st.html(f"""
-    <div style="
-        max-width:860px; margin:0 auto;
-        padding: 0 clamp(20px,5vw,48px) 32px;
-        display:flex; justify-content:center;
-    ">
-      <div style="
-        display:inline-flex; align-items:center; gap:16px;
-        background:rgba(255,255,255,0.03);
-        border:1px solid rgba(255,255,255,0.07);
-        border-radius:100px; padding:10px 22px 10px 10px;
-      ">
-        <div style="display:flex; align-items:center;">
-          <img src="data:image/jpeg;base64,{_av[0]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:6;" />
-          <img src="data:image/jpeg;base64,{_av[1]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:5;" />
-          <img src="data:image/jpeg;base64,{_av[2]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:4;" />
-          <img src="data:image/jpeg;base64,{_av[3]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:3;" />
-          <img src="data:image/jpeg;base64,{_av[4]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:2;" />
-          <img src="data:image/jpeg;base64,{_av[5]}"
-            style="width:46px;height:46px;border-radius:50%;border:2px solid #05070f;object-fit:cover;margin-right:-10px;position:relative;z-index:1;" />
-          <div style="
-            width:46px;height:46px;border-radius:50%;
-            border:2px solid #05070f;
-            background:#10141f;
-            display:flex;align-items:center;justify-content:center;
-            font-family:'DM Mono',monospace;font-size:0.52rem;
-            color:#9aa3be;font-weight:600;
-            position:relative;z-index:0;
-          ">+4</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:1px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00e5c8;flex-shrink:0;"></span>
-            <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:#e4eaf8;font-weight:500;">
-              Trusted by <strong style="color:#00e5c8;">Researchers globally</strong>
-            </span>
-          </div>
-          
-        </div>
-      </div>
-    </div>
-    """)
-
-    # Auth Gate — placed BEFORE pricing so returning users don't scroll past it
-    st.markdown("""
-    <div id="key-gate" class="lp-gate fi d6">
-      <div class="gate-card">
-        <div class="gate-lock">🔑</div>
-        <div class="gate-title">Already have a key?</div>
-        <div class="gate-desc">
-          Enter your access key below to unlock all four tools instantly.
-          One key. <strong>Shared credit balance</strong> across every app.
-          No recurring billing. Credits never expire.
-        </div>
-        <div class="key-format">
-            <span class="kf-icon">◈</span>
-            Key format:&nbsp; BTX-XXXX-XXXX-XXXX
-        </div>
-        <div class="gate-form">
-            <span class="gate-input-label">Access Key</span>
-        </div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    _, gate_col, _ = st.columns([1, 2, 1])
-    with gate_col:
-        entered_key = st.text_input(
-            "Access Key",
-            type="password",
-            placeholder="BTX-XXXX-XXXX-XXXX",
-            label_visibility="collapsed",
-            key="suite_key_input",
-        )
-        unlock_btn = st.button(
-            "⬡  Unlock the Suite",
-            use_container_width=True,
-            type="primary",
-            key="unlock_btn",
-        )
-
-        if st.session_state.get("access_error"):
-            st.markdown(f"""
-            <div class="err-msg">
-                <span>✕</span> {st.session_state.access_error}
-            </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div class="gate-links">
-            <a href="mailto:bayantx360@gmail.com">👤 Contact Sales</a>
-            <span class="gate-sep">|</span>
-            <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">📋 User Guide</a>
-            <span class="gate-sep">|</span>
-            <a href="mailto:bayantx360@gmail.com">⚙ Support</a>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Pricing — below auth gate
-    st.markdown("""
-    <div id="pricing" class="lp-pricing fi d5">
-      <div class="section-head">
-        <div class="section-title">Buy Credits & <em>Access More</em> Features</div>
-        <span class="section-label">Pay-as-you-go credits · No monthly subscription · Credits never expire</span>
-        <p style="font-family:var(--mono);font-size:0.7rem;color:var(--text2);margin-top:14px;line-height:2;">
-          <strong style="color:var(--teal);">1 credit = 1 AI interpretation</strong> &nbsp;or&nbsp; <strong style="color:var(--teal);">1 export</strong> &nbsp;(DOCX, CSV, or Excel).
-          Analysis runs are always free and unlimited.
-        </p>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    pc1, pc2, pc3 = st.columns(3, gap="small")
-
-    with pc1:
-        st.markdown("""
-        <div class="price-card fi d3">
-          <div class="price-plan">Starter</div>
-          <div class="price-amount">$8</div>
-          <div class="price-credits">5 Suite Credits</div>
-          <div class="price-note">Works across all apps</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/tumvwsar2zi5", type="primary", use_container_width=True)
-
-    with pc2:
-        st.markdown("""
-        <div class="price-card featured fi d4">
-          <span class="price-badge badge-pop">Most Popular</span>
-          <div class="price-plan">Standard</div>
-          <div class="price-amount">$18</div>
-          <div class="price-credits">15 Suite Credits</div>
-          <div class="price-note">Best value for active researchers</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/w08ixsaspudw", type="primary", use_container_width=True)
-
-    with pc3:
-        st.markdown("""
-        <div class="price-card fi d5">
-          <span class="price-badge badge-val">Best Value</span>
-          <div class="price-plan">Pro</div>
-          <div class="price-amount">$30</div>
-          <div class="price-credits">30 Suite Credits</div>
-          <div class="price-note">For teams and power researchers</div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li><span class="pf-check">✓</span>Unlimited analysis runs across any app</li>
-            <li><span class="pf-check">✓</span>AI explainer unlocked</li>
-            <li><span class="pf-check">✓</span>All export formats (DOCX, CSV, Excel)</li>
-            <li><span class="pf-check">✓</span>Credits never expire</li>
-          </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.link_button("Buy Credits →", "https://flutterwave.com/pay/rjsshar0wqlk", type="primary", use_container_width=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Footer
-    st.markdown("""
-    <div class="lp-footer fi d8">
-        <div class="footer-brand">Sta<span class="ft">X360</span></div>
-        <div class="footer-links">
-            <a href="https://x.com/bayantx360" target="_blank">Twitter / X</a>
-            <a href="https://app.box.com/s/vw4c6u10bv0z8ngarzj73ej18t74e3wl" target="_blank">User Guide</a>
-            <a href="mailto:bayantx360@gmail.com">Support</a>
-        </div>
-        <div class="footer-copy">StaX360 · Unified Analytics Suite · Credit-based access</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── Button handlers ────────────────────────────────────────────────────────────
-    if free_trial_btn:
-        activate_free_trial()
-
-    if unlock_btn:
-        process_key_login(entered_key)
-
-
-# ── V2 Router setup ───────────────────────────────────────────────────────────
-# st.navigation() MUST come before st.set_page_config() — it is the first
-# Streamlit call. _pg.run() dispatches to the current page's callable/file.
-_home_page      = st.Page(render_home,            title="StaX360 Suite", icon="🌐", default=True)
-_panelstatx_page = st.Page("pages/panelstatx.py",  title="PanelStatX",       icon="📐")
-_datasynthx_page = st.Page("pages/datasynthx.py",  title="DataSynthX",       icon="🧬")
-_efactor_page    = st.Page("pages/efactor.py",     title="EFActor",          icon="🔬")
-_datacleanx_page    = st.Page("pages/datacleanx.py",     title="DataCleanX",          icon="🧹")
- 
-_pg = st.navigation(
-    [_home_page, _panelstatx_page, _datasynthx_page, _efactor_page, _datacleanx_page],
-    position="hidden",
-)
-
-st.set_page_config(
-    page_title="StaX360 Suite",
-    page_icon="⬡",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-)
-
-# Store page objects in session so sub-pages can switch back to home
-# without using "suite_home.py" string path (invalid for callable pages).
-st.session_state["_home_page"]       = _home_page
-st.session_state["_panelstatx_page"] = _panelstatx_page
-st.session_state["_datasynthx_page"] = _datasynthx_page
-st.session_state["_efactor_page"]    = _efactor_page
-st.session_state["_datacleanx_page"]    = _datacleanx_page
-
-_pg.run()
+def render_credit_cost_caption(credits_left: int, cost: int = 1):
+    """Render the small 'costs N credit · X remaining' caption under premium buttons."""
+    noun = "credit" if cost == 1 else "credits"
+    st.caption(f"⚡ Costs {cost} {noun} · {credits_left} remaining")
