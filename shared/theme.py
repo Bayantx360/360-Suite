@@ -85,11 +85,25 @@ SUITE_CSS = """
 }
 
 /* ── Global ── */
-html, body, [data-testid="stAppViewContainer"] {
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     background-color: var(--bg) !important;
     color: var(--text) !important;
     font-family: var(--mono) !important;
 }
+
+/* ── Header / toolbar / decoration bar ──
+   Without this, Streamlit's native chrome (the top bar holding the
+   hamburger menu and "Manage app" link, plus the thin accent line above
+   it) keeps its own default theme background regardless of what the
+   rest of the CSS does to the content area - that mismatch is exactly
+   the grey-bar-over-dark-canvas seam. Force all of it to the same --bg. */
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+}
+[data-testid="stHeader"] * { color: var(--text) !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
