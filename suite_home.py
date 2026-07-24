@@ -1010,6 +1010,30 @@ def render_home():
     </div>
     """)
 
+    st.markdown("""
+    <style>
+    div.st-key-testimonials_cta button {
+      background: rgba(255,255,255,0.03) !important;
+      border: 1px solid rgba(0,229,200,0.28) !important;
+      color: #00e5c8 !important;
+      font-family: 'DM Mono', monospace !important;
+      font-weight: 500 !important;
+      font-size: 0.78rem !important;
+      padding: 10px 8px !important;
+      border-radius: 100px !important;
+    }
+    div.st-key-testimonials_cta button:hover {
+      background: rgba(0,229,200,0.06) !important;
+      border-color: rgba(0,229,200,0.45) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    _, cta_col, _ = st.columns([1.6, 1, 1.6])
+    with cta_col:
+        with st.container(key="testimonials_cta"):
+            if st.button("💬  See what our users are saying →", use_container_width=True):
+                st.switch_page(st.session_state["_testimonials_page"])
+
     # Auth Gate — placed BEFORE pricing so returning users don't scroll past it
     st.markdown("""
     <div id="key-gate" class="lp-gate fi d6">
@@ -1164,9 +1188,10 @@ _panelstatx_page = st.Page("pages/panelstatx.py",  title="PanelStatX",       ico
 _datasynthx_page = st.Page("pages/datasynthx.py",  title="DataSynthX",       icon="🧬")
 _efactor_page    = st.Page("pages/efactor.py",     title="EFActor",          icon="🔬")
 _datacleanx_page    = st.Page("pages/datacleanx.py",     title="DataCleanX",          icon="🧹")
- 
+_testimonials_page = st.Page("pages/testimonials.py", title="Testimonials", icon="💬")
+
 _pg = st.navigation(
-    [_home_page, _panelstatx_page, _datasynthx_page, _efactor_page, _datacleanx_page],
+    [_home_page, _panelstatx_page, _datasynthx_page, _efactor_page, _datacleanx_page, _testimonials_page],
     position="hidden",
 )
 
@@ -1184,5 +1209,6 @@ st.session_state["_panelstatx_page"] = _panelstatx_page
 st.session_state["_datasynthx_page"] = _datasynthx_page
 st.session_state["_efactor_page"]    = _efactor_page
 st.session_state["_datacleanx_page"]    = _datacleanx_page
+st.session_state["_testimonials_page"] = _testimonials_page
 
 _pg.run()
